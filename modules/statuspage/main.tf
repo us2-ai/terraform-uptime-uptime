@@ -47,7 +47,7 @@ locals {
 }
 
 resource "uptime_statuspage_component" "this" {
-  for_each = var.create && local.statuspage_id != null ? var.components : {}
+  for_each = var.create ? var.components : {}
 
   statuspage_id    = local.statuspage_id
   name             = try(each.value.name, each.key)
@@ -61,7 +61,7 @@ resource "uptime_statuspage_component" "this" {
 }
 
 resource "uptime_statuspage_incident" "this" {
-  for_each = var.create && local.statuspage_id != null ? var.incidents : {}
+  for_each = var.create ? var.incidents : {}
 
   statuspage_id                       = local.statuspage_id
   name                                = try(each.value.name, each.key)
@@ -78,7 +78,7 @@ resource "uptime_statuspage_incident" "this" {
 }
 
 resource "uptime_statuspage_metric" "this" {
-  for_each = var.create && local.statuspage_id != null ? var.metrics : {}
+  for_each = var.create ? var.metrics : {}
 
   statuspage_id = local.statuspage_id
   name          = try(each.value.name, each.key)
@@ -87,7 +87,7 @@ resource "uptime_statuspage_metric" "this" {
 }
 
 resource "uptime_statuspage_subscriber" "this" {
-  for_each = var.create && local.statuspage_id != null ? var.subscribers : {}
+  for_each = var.create ? var.subscribers : {}
 
   statuspage_id        = local.statuspage_id
   type                 = each.value.type
@@ -96,21 +96,21 @@ resource "uptime_statuspage_subscriber" "this" {
 }
 
 resource "uptime_statuspage_subscription_domain_allow" "this" {
-  for_each = var.create && local.statuspage_id != null ? var.subscription_domain_allows : {}
+  for_each = var.create ? var.subscription_domain_allows : {}
 
   statuspage_id = local.statuspage_id
   domain        = try(each.value.domain, each.key)
 }
 
 resource "uptime_statuspage_subscription_domain_block" "this" {
-  for_each = var.create && local.statuspage_id != null ? var.subscription_domain_blocks : {}
+  for_each = var.create ? var.subscription_domain_blocks : {}
 
   statuspage_id = local.statuspage_id
   domain        = try(each.value.domain, each.key)
 }
 
 resource "uptime_statuspage_user" "this" {
-  for_each = var.create && local.statuspage_id != null ? var.users : {}
+  for_each = var.create ? var.users : {}
 
   statuspage_id = local.statuspage_id
   email         = each.value.email
