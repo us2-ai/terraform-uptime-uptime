@@ -285,3 +285,80 @@ variable "users" {
   type        = any
   default     = {}
 }
+
+# Inspire theme customization and layout. Requires the us2-ai provider fork;
+# see the module-level versions.tf for the pinned provider release.
+
+variable "custom_header_html_inspire" {
+  description = "Custom header HTML applied only to the Inspire theme"
+  type        = string
+  default     = null
+}
+
+variable "custom_footer_html_inspire" {
+  description = "Custom footer HTML applied only to the Inspire theme"
+  type        = string
+  default     = null
+}
+
+variable "custom_css_inspire" {
+  description = "Custom CSS applied only to the Inspire theme"
+  type        = string
+  default     = null
+}
+
+variable "layout_preset" {
+  description = "Inspire-theme layout preset (typically EXPANDED or COMPACT)"
+  type        = string
+  default     = null
+}
+
+variable "show_component_bars" {
+  description = "Show component bars on the Inspire layout"
+  type        = bool
+  default     = null
+}
+
+variable "show_component_group_descriptions" {
+  description = "Show component group descriptions on the Inspire layout"
+  type        = bool
+  default     = null
+}
+
+# Previously-unmapped general-purpose statuspage settings.
+
+variable "allow_notifications" {
+  description = "Allow subscriber notifications"
+  type        = bool
+  default     = null
+}
+
+variable "default_status_date_range" {
+  description = "Default date range (days) shown on the status tab"
+  type        = number
+  default     = null
+}
+
+variable "hide_empty_tabs_status" {
+  description = "Hide the status tab when no components are present"
+  type        = bool
+  default     = null
+}
+
+variable "logo_url" {
+  description = "URL of the logo shown on the status page"
+  type        = string
+  default     = null
+}
+
+variable "email_logo_url" {
+  description = "URL of the logo used in subscriber notification emails"
+  type        = string
+  default     = null
+}
+
+variable "favicon_url" {
+  description = "URL of the favicon for the status page"
+  type        = string
+  default     = null
+}

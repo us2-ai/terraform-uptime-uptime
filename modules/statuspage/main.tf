@@ -40,6 +40,19 @@ resource "uptime_statuspage" "this" {
   theme                        = var.theme
   timezone                     = var.timezone
   uptime_calculation_type      = var.uptime_calculation_type
+
+  custom_header_html_inspire        = var.custom_header_html_inspire
+  custom_footer_html_inspire        = var.custom_footer_html_inspire
+  custom_css_inspire                = var.custom_css_inspire
+  layout_preset                     = var.layout_preset
+  show_component_bars               = var.show_component_bars
+  show_component_group_descriptions = var.show_component_group_descriptions
+  allow_notifications               = var.allow_notifications
+  default_status_date_range         = var.default_status_date_range
+  hide_empty_tabs_status            = var.hide_empty_tabs_status
+  logo_url                          = var.logo_url
+  email_logo_url                    = var.email_logo_url
+  favicon_url                       = var.favicon_url
 }
 
 locals {

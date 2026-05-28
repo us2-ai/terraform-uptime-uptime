@@ -6,6 +6,17 @@ on:
   push:
     branches: [main]
 
+# Pre-release: the module pins uptime-com/uptime to a version only the us2-ai
+# fork publishes, and the provider fork has no release tag yet. The validate
+# jobs below install the provider by building from the open PR branch via the
+# install-provider composite action (source mode). Once the matching provider
+# release tag exists, the source-ref input can be dropped and the action ref
+# bumped to the same version.
+env:
+  PROVIDER_VERSION: "2.26.0-us2.1"
+  PROVIDER_SOURCE_REF: "claude/sweet-albattani-4a7933"
+  PROVIDER_ACTION_REF: "claude/sweet-albattani-4a7933"
+
 jobs:
   fmt:
     name: Format
@@ -21,6 +32,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - name: Install forked uptime provider
+        uses: us2-ai/terraform-provider-uptime/.github/actions/install-provider@claude/sweet-albattani-4a7933
+        with:
+          version: ${{ env.PROVIDER_VERSION }}
+          registry: registry.terraform.io
+          source-ref: ${{ env.PROVIDER_SOURCE_REF }}
       - run: terraform init -backend=false
       - run: terraform validate
 
@@ -29,10 +49,19 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        example: [simple, complete, integrations]
+        example: [simple, complete, integrations, private-locations]
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - name: Install forked uptime provider
+        uses: us2-ai/terraform-provider-uptime/.github/actions/install-provider@claude/sweet-albattani-4a7933
+        with:
+          version: ${{ env.PROVIDER_VERSION }}
+          registry: registry.terraform.io
+          source-ref: ${{ env.PROVIDER_SOURCE_REF }}
       - working-directory: examples/${{ matrix.example }}
         run: terraform init -backend=false
       - working-directory: examples/${{ matrix.example }}
@@ -44,6 +73,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - name: Install forked uptime provider
+        uses: us2-ai/terraform-provider-uptime/.github/actions/install-provider@claude/sweet-albattani-4a7933
+        with:
+          version: ${{ env.PROVIDER_VERSION }}
+          registry: registry.terraform.io
+          source-ref: ${{ env.PROVIDER_SOURCE_REF }}
       - working-directory: wrappers
         run: terraform init -backend=false
       - working-directory: wrappers

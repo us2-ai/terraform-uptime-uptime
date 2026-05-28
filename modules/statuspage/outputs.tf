@@ -42,3 +42,53 @@ output "user" {
   description = "Map of status page user outputs"
   value       = uptime_statuspage_user.this
 }
+
+output "public_url" {
+  description = "Public-facing URL of the status page (populated by the API)"
+  value       = try(uptime_statuspage.this[0].public_url, null)
+}
+
+output "private_url" {
+  description = "Internal URL of the status page"
+  value       = try(uptime_statuspage.this[0].private_url, null)
+}
+
+output "cname_url" {
+  description = "Custom-domain URL of the status page (when a cname is configured)"
+  value       = try(uptime_statuspage.this[0].cname_url, null)
+}
+
+output "incidents_url" {
+  description = "API URL for incidents on the status page"
+  value       = try(uptime_statuspage.this[0].incidents_url, null)
+}
+
+output "components_url" {
+  description = "API URL for components on the status page"
+  value       = try(uptime_statuspage.this[0].components_url, null)
+}
+
+output "metrics_url" {
+  description = "API URL for metrics on the status page"
+  value       = try(uptime_statuspage.this[0].metrics_url, null)
+}
+
+output "history_url" {
+  description = "API URL for history entries on the status page"
+  value       = try(uptime_statuspage.this[0].history_url, null)
+}
+
+output "current_status_url" {
+  description = "API URL for the current status snapshot"
+  value       = try(uptime_statuspage.this[0].current_status_url, null)
+}
+
+output "description_html" {
+  description = "HTML-rendered description of the status page"
+  value       = try(uptime_statuspage.this[0].description_html, null)
+}
+
+output "page_type_display" {
+  description = "Human-readable label for the page type"
+  value       = try(uptime_statuspage.this[0].page_type_display, null)
+}

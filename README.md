@@ -112,6 +112,18 @@ cachet, datadog, geckoboard, jira_servicedesk, klipfolio, microsoft_teams, opsge
 - [Simple](./examples/simple/) — Single HTTP check with tag and group
 - [Complete](./examples/complete/) — Multiple check types, integrations, escalations, and maintenance
 - [Integrations](./examples/integrations/) — Various integration configurations
+- [Private Locations](./examples/private-locations/) — Targeting privately-registered probe servers (requires the us2-ai provider fork; see [versions.tf](./versions.tf))
+
+## Special Build
+
+This module is pinned to the [us2-ai fork](https://github.com/us2-ai/terraform-provider-uptime) of the provider so it can expose features the upstream provider does not yet ship:
+
+- `uptime_private_locations` data source for referencing privately-registered probe servers.
+- Inspire-theme statuspage customization fields (`custom_*_inspire`, `layout_preset`, `show_component_bars`, `show_component_group_descriptions`).
+- Previously-unmapped statuspage settings (`allow_notifications`, `default_status_date_range`, `hide_empty_tabs_status`, `logo_url`, `email_logo_url`, `favicon_url`).
+- Read-only statuspage response URLs as module outputs (`public_url`, `private_url`, sub-resource `*_url` outputs, `description_html`, `page_type_display`).
+
+The fork in turn requires a matching build of [us2-ai/uptime-client-go](https://github.com/us2-ai/uptime-client-go). Install the provider into CI via the composite action documented at [docs/ci-integration.md](https://github.com/us2-ai/terraform-provider-uptime/blob/main/docs/ci-integration.md) in the provider repository; do not consume this module against the public Terraform Registry release of `uptime-com/uptime`.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
