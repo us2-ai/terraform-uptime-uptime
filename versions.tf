@@ -11,7 +11,7 @@ terraform {
       # at us2-ai/terraform-provider-uptime; see docs/ci-integration.md in
       # that repository. The pinned version must match the release tag of
       # the forked provider.
-      version = "2.26.0-us2.0"
+      version = "2.26.0-us2.1"
     }
   }
 }
