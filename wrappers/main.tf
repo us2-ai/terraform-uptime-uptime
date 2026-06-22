@@ -43,6 +43,8 @@ module "wrapper" {
   integrations                = try(each.value.integrations, var.defaults.integrations, {})
   escalations                 = try(each.value.escalations, var.defaults.escalations, {})
   maintenances                = try(each.value.maintenances, var.defaults.maintenances, {})
+  maintenance_schedules       = try(each.value.maintenance_schedules, var.defaults.maintenance_schedules, {})
+  maintenance_notifications   = try(each.value.maintenance_notifications, var.defaults.maintenance_notifications, {})
   contacts                    = try(each.value.contacts, var.defaults.contacts, {})
   statuspages                 = try(each.value.statuspages, var.defaults.statuspages, {})
   credentials                 = try(each.value.credentials, var.defaults.credentials, {})

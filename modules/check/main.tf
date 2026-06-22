@@ -19,6 +19,23 @@ resource "uptime_check_blacklist" "this" {
   tags           = var.tags
 }
 
+resource "uptime_check_cloudstatus" "this" {
+  count = var.create && var.type == "cloudstatus" ? 1 : 0
+
+  name = var.name
+
+  contact_groups      = var.contact_groups
+  group               = try(var.cloudstatus_config.group, null)
+  is_paused           = var.is_paused
+  locations           = var.locations
+  monitoring_type     = try(var.cloudstatus_config.monitoring_type, null)
+  notify_only_on_down = try(var.cloudstatus_config.notify_only_on_down, null)
+  service_name        = try(var.cloudstatus_config.service_name, null)
+  service_titles      = try(var.cloudstatus_config.service_titles, null)
+  services            = try(var.cloudstatus_config.services, null)
+  tags                = var.tags
+}
+
 resource "uptime_check_dns" "this" {
   count = var.create && var.type == "dns" ? 1 : 0
 

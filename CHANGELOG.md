@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-06-22
+
+### Features
+
+- Add `cloudstatus` check type for monitoring public cloud provider status feeds (provider v2.25.0+)
+- Add maintenance_schedule module for account-level maintenance windows (one-off and RRULE recurring) (provider v2.28.0+)
+- Add maintenance_notification module to notify contact groups before/after a maintenance schedule event (provider v2.28.0+)
+
+### Bug Fixes
+
+- Default tag `color_hex` to `#cccccc` when unset; the provider made this attribute required in v2.20.0
+
+### Notes
+
+- Raise minimum provider version from `>= 2.10` to `>= 2.28` to cover the new resources
+
 ## [1.1.0] - 2026-03-28
 
 ### Features

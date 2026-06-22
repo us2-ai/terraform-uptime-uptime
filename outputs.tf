@@ -28,6 +28,16 @@ output "maintenance" {
   value       = module.maintenance
 }
 
+output "maintenance_schedule" {
+  description = "Map of maintenance schedule module outputs keyed by schedule name"
+  value       = module.maintenance_schedule
+}
+
+output "maintenance_notification" {
+  description = "Map of maintenance notification module outputs keyed by notification name"
+  value       = module.maintenance_notification
+}
+
 output "contact" {
   description = "Map of contact module outputs keyed by contact name"
   value       = module.contact

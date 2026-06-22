@@ -3,6 +3,7 @@ output "id" {
   value = coalesce(
     try(uptime_check_api.this[0].id, null),
     try(uptime_check_blacklist.this[0].id, null),
+    try(uptime_check_cloudstatus.this[0].id, null),
     try(uptime_check_dns.this[0].id, null),
     try(uptime_check_heartbeat.this[0].id, null),
     try(uptime_check_http.this[0].id, null),
@@ -30,6 +31,7 @@ output "name" {
   value = coalesce(
     try(uptime_check_api.this[0].name, null),
     try(uptime_check_blacklist.this[0].name, null),
+    try(uptime_check_cloudstatus.this[0].name, null),
     try(uptime_check_dns.this[0].name, null),
     try(uptime_check_heartbeat.this[0].name, null),
     try(uptime_check_http.this[0].name, null),
