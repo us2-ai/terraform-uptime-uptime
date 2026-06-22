@@ -52,6 +52,13 @@ module "uptime" {
       type   = "api"
       script = jsonencode([{ step_def = "C_URL", values = { url = "https://example.com/api/health" } }])
     }
+    cloud = {
+      type = "cloudstatus"
+      cloudstatus_config = {
+        group           = 12
+        monitoring_type = "ALL"
+      }
+    }
   }
 
   integrations = {
@@ -101,6 +108,26 @@ module "uptime" {
           to_time   = "04:00"
         }
       ]
+    }
+  }
+
+  maintenance_schedules = {
+    weekly-patching = {
+      schedule_type                   = "RRULE"
+      starts_at                       = "2026-07-01T02:00:00Z"
+      rrule                           = "FREQ=WEEKLY;BYDAY=SA"
+      duration_minutes                = 120
+      pause_checks_during_maintenance = true
+      services                        = [module.uptime.check["homepage"].id]
+    }
+  }
+
+  maintenance_notifications = {
+    notify-before-start = {
+      schedule_id    = module.uptime.maintenance_schedule["weekly-patching"].id
+      event          = "START"
+      offset         = -1800 # 30 minutes before
+      contact_groups = [module.uptime.contact["devops"].id]
     }
   }
 
