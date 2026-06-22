@@ -117,6 +117,7 @@ cachet, datadog, geckoboard, jira_servicedesk, klipfolio, microsoft_teams, opsge
 - [Simple](./examples/simple/) — Single HTTP check with tag and group
 - [Complete](./examples/complete/) — Multiple check types, integrations, escalations, and maintenance
 - [Integrations](./examples/integrations/) — Various integration configurations
+- [Maintenance](./examples/maintenance/) — Cloud status check, maintenance schedules, and notifications
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
