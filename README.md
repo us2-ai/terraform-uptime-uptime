@@ -41,12 +41,13 @@ module "uptime" {
 
 ## Features
 
-### Supported Check Types (21)
+### Supported Check Types (22)
 
 | Check Type | Description |
 |---|---|
 | `api` | API multi-step checks with JSON scripts |
 | `blacklist` | Domain blacklist monitoring |
+| `cloudstatus` | Public cloud provider status feed monitoring |
 | `dns` | DNS record verification |
 | `heartbeat` | Heartbeat/cron job monitoring |
 | `http` | HTTP/HTTPS endpoint monitoring |
@@ -77,6 +78,8 @@ cachet, datadog, geckoboard, jira_servicedesk, klipfolio, microsoft_teams, opsge
 - **Check Groups** — Group checks with shared SLA and alerting configuration
 - **Escalations** — Define escalation policies attached to checks
 - **Maintenance** — Schedule maintenance windows for checks
+- **Maintenance Schedules** — Account-level maintenance windows (one-off or RRULE recurring) targeting checks and tags
+- **Maintenance Notifications** — Notify contact groups before/after a maintenance schedule event
 - **Contacts** — Manage notification contacts and contact groups (email, SMS, phone, push, integrations)
 - **Status Pages** — Public status pages with components, incidents, metrics, subscribers, domain allow/block lists, and users
 - **Credentials** — API credentials for secure check configuration
@@ -97,6 +100,8 @@ cachet, datadog, geckoboard, jira_servicedesk, klipfolio, microsoft_teams, opsge
 | [integration](./modules/integration/) | Creates alert integrations |
 | [escalation](./modules/escalation/) | Creates check escalation policies |
 | [maintenance](./modules/maintenance/) | Creates check maintenance windows |
+| [maintenance_schedule](./modules/maintenance_schedule/) | Creates account-level maintenance schedules |
+| [maintenance_notification](./modules/maintenance_notification/) | Creates maintenance schedule notifications |
 | [contact](./modules/contact/) | Creates notification contacts and contact groups |
 | [statuspage](./modules/statuspage/) | Creates status pages with components, incidents, metrics, subscribers, and users |
 | [credential](./modules/credential/) | Creates API credentials |
@@ -118,8 +123,8 @@ cachet, datadog, geckoboard, jira_servicedesk, klipfolio, microsoft_teams, opsge
 
 | Name | Version |
 |------|---------|
-| terraform | ~> 1.6 |
-| uptime | ~> 2.10 |
+| terraform | >= 1.6 |
+| uptime | >= 2.28 |
 
 ## Providers
 
@@ -137,6 +142,8 @@ No providers.
 | group | ./modules/group | n/a |
 | integration | ./modules/integration | n/a |
 | maintenance | ./modules/maintenance | n/a |
+| maintenance\_notification | ./modules/maintenance\_notification | n/a |
+| maintenance\_schedule | ./modules/maintenance\_schedule | n/a |
 | scheduled\_report | ./modules/scheduled\_report | n/a |
 | service\_variable | ./modules/service\_variable | n/a |
 | sla\_report | ./modules/sla\_report | n/a |
@@ -190,6 +197,8 @@ No providers.
 | integrations | Integrations | `any` | `{}` | no |
 | escalations | Escalations | `any` | `{}` | no |
 | maintenances | Maintenances | `any` | `{}` | no |
+| maintenance\_schedules | Maintenance Schedules | `any` | `{}` | no |
+| maintenance\_notifications | Maintenance Notifications | `any` | `{}` | no |
 | contacts | Contacts | `any` | `{}` | no |
 | statuspages | Status Pages | `any` | `{}` | no |
 | credentials | Credentials | `any` | `{}` | no |
@@ -210,6 +219,8 @@ No providers.
 | integration | Integration module outputs |
 | escalation | Escalation module outputs |
 | maintenance | Maintenance module outputs |
+| maintenance\_schedule | Maintenance schedule module outputs |
+| maintenance\_notification | Maintenance notification module outputs |
 | contact | Contact module outputs |
 | statuspage | Status page module outputs |
 | credential | Credential module outputs |

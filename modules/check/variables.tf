@@ -12,7 +12,7 @@ variable "type" {
   type        = string
 
   validation {
-    condition     = can(regex("^(api|blacklist|dns|heartbeat|http|icmp|imap|malware|ntp|pagespeed|pop|rdap|rum2|smtp|sslcert|ssh|tcp|transaction|udp|webhook|whois)$", var.type))
+    condition     = can(regex("^(api|blacklist|cloudstatus|dns|heartbeat|http|icmp|imap|malware|ntp|pagespeed|pop|rdap|rum2|smtp|sslcert|ssh|tcp|transaction|udp|webhook|whois)$", var.type))
     error_message = "Must be a valid type of check"
   }
 }
@@ -214,4 +214,15 @@ variable "sla_uptime" {
   description = "SLA uptime (string, for RUM2 checks)"
   type        = string
   default     = null
+}
+
+variable "cloudstatus_config" {
+  description = <<-EOT
+    Cloudstatus check configuration. Supported keys:
+    group (number), monitoring_type (string: ALL or SPECIFIC),
+    notify_only_on_down (bool), service_name (string, deprecated/legacy),
+    service_titles (list(string)), services (list(number)).
+  EOT
+  type        = any
+  default     = {}
 }

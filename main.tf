@@ -96,6 +96,7 @@ module "check" {
   sla_uptime                  = try(each.value.sla_uptime, var.sla_uptime)
   pagespeed_config            = try(each.value.pagespeed_config, {})
   pagespeed_headers           = try(each.value.pagespeed_headers, null)
+  cloudstatus_config          = try(each.value.cloudstatus_config, {})
 }
 
 module "integration" {
@@ -127,6 +128,34 @@ module "maintenance" {
   schedule                       = try(each.value.schedule, null)
   state                          = try(each.value.state, null)
   pause_on_scheduled_maintenance = try(each.value.pause_on_scheduled_maintenance, null)
+}
+
+module "maintenance_schedule" {
+  source   = "./modules/maintenance_schedule"
+  for_each = { for k, v in var.maintenance_schedules : k => v if var.create }
+
+  create                          = try(each.value.create_maintenance_schedule, true)
+  name                            = try(each.value.name, each.key)
+  schedule_type                   = each.value.schedule_type
+  starts_at                       = each.value.starts_at
+  duration_minutes                = try(each.value.duration_minutes, null)
+  ends_at                         = try(each.value.ends_at, null)
+  is_active                       = try(each.value.is_active, null)
+  pause_checks_during_maintenance = try(each.value.pause_checks_during_maintenance, null)
+  rrule                           = try(each.value.rrule, null)
+  services                        = try(each.value.services, null)
+  tags                            = try(each.value.tags, null)
+}
+
+module "maintenance_notification" {
+  source   = "./modules/maintenance_notification"
+  for_each = { for k, v in var.maintenance_notifications : k => v if var.create }
+
+  create         = try(each.value.create_maintenance_notification, true)
+  schedule_id    = each.value.schedule_id
+  event          = each.value.event
+  offset         = each.value.offset
+  contact_groups = each.value.contact_groups
 }
 
 module "contact" {

@@ -247,6 +247,18 @@ variable "maintenances" {
   default     = {}
 }
 
+variable "maintenance_schedules" {
+  description = "Maintenance Schedules"
+  type        = any
+  default     = {}
+}
+
+variable "maintenance_notifications" {
+  description = "Maintenance Notifications"
+  type        = any
+  default     = {}
+}
+
 variable "contacts" {
   description = "Contacts"
   type        = any
