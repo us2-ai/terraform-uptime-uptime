@@ -28,6 +28,16 @@ output "maintenance" {
   value       = module.uptime.maintenance
 }
 
+output "maintenance_schedule" {
+  description = "Maintenance schedule outputs"
+  value       = module.uptime.maintenance_schedule
+}
+
+output "maintenance_notification" {
+  description = "Maintenance notification outputs"
+  value       = module.uptime.maintenance_notification
+}
+
 output "contact" {
   description = "Contact outputs"
   value       = module.uptime.contact
