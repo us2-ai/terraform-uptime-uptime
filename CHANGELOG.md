@@ -18,6 +18,12 @@ All notable changes to this project will be documented in this file.
 
 - Raise minimum provider version from `>= 2.10` to `>= 2.28` to cover the new resources
 
+## [1.1.1] - 2026-05-21
+
+### Bug Fixes
+
+- Remove the `local.statuspage_id != null` guard from the statuspage child `for_each` so child resources are created correctly
+
 ## [1.1.0] - 2026-03-28
 
 ### Features
