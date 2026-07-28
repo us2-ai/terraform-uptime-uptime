@@ -100,6 +100,12 @@ All notable changes to this project will be documented in this file.
 
 ### Notes
 
+- Regenerate the README tables. The committed tables had drifted from what `.terraform-docs.yml`
+  actually produces, and the six submodule READMEs plus the wrapper README had generation markers
+  with no content at all. Also add `data-sources` to the configured sections, without which the
+  root module's `uptime_private_locations` lookup was omitted, and `{{ .Requirements }}` to the
+  content template, without which regenerating deleted the Requirements table. CI now regenerates
+  and fails on any difference.
 - Raise minimum provider version from `>= 2.28` to `>= 2.31` to cover the new attributes and data
   source, and to pick up the `uptime_statuspage` `auth_password` and `uptime_service_variable`
   resource-ID fixes released in v2.30.0/v2.31.0
@@ -122,6 +128,12 @@ All notable changes to this project will be documented in this file.
 
 ### Notes
 
+- Regenerate the README tables. The committed tables had drifted from what `.terraform-docs.yml`
+  actually produces, and the six submodule READMEs plus the wrapper README had generation markers
+  with no content at all. Also add `data-sources` to the configured sections, without which the
+  root module's `uptime_private_locations` lookup was omitted, and `{{ .Requirements }}` to the
+  content template, without which regenerating deleted the Requirements table. CI now regenerates
+  and fails on any difference.
 - Raise minimum provider version from `>= 2.10` to `>= 2.28` to cover the new resources
 
 ## [1.1.1] - 2026-05-21

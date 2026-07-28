@@ -6,11 +6,16 @@ sections:
     - providers
     - modules
     - resources
+    # Data sources are rendered into the resources table; without this the root module's
+    # uptime_private_locations lookup is omitted entirely.
+    - data-sources
     - inputs
     - outputs
 
 content: |-
   {{ .Header }}
+
+  {{ .Requirements }}
 
   {{ .Providers }}
 

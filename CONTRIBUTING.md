@@ -79,9 +79,26 @@ Two limitations worth knowing:
 
 ### Regenerate documentation
 
+The README tables between the `BEGIN_TF_DOCS` / `END_TF_DOCS` markers are generated. Eight
+directories have generated tables — the root, six submodules, and the wrapper:
+
 ```bash
-terraform-docs .
+for dir in . modules/check modules/escalation modules/group \
+           modules/integration modules/maintenance modules/tag wrappers; do
+  terraform-docs -c "$PWD/.terraform-docs.yml" "$dir"
+done
 ```
+
+CI regenerates these and fails on any difference, so commit the result.
+
+Two things to know:
+
+- Run this **without** a `.terraform.lock.hcl` present in the directory. With a lock file,
+  terraform-docs renders the resolved provider version (`2.31.0`) instead of the constraint
+  (`>= 2.31`), which does not match what CI produces. `terraform init` creates one, so regenerate
+  from a clean checkout or move the lock file aside.
+- CI pins terraform-docs to the version named in `.github/workflows/validate.yml`; a different
+  version may format tables differently.
 
 ## Guidelines
 
