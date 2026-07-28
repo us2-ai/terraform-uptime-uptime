@@ -1,8 +1,13 @@
 locals {
   http_protocol = var.encryption ? "https://" : "http://"
-  http_address  = join("", [local.http_protocol, var.address])
-  http_port     = var.encryption ? 443 : 80
-  encryption    = var.encryption ? "SSL_TLS" : null
+
+  # Address-less check types (heartbeat, cloudstatus) leave var.address null, and this local is
+  # evaluated regardless of which type is selected. join() rejects null elements, so guard it
+  # rather than failing the whole plan for a check that never needed an address.
+  http_address = var.address == null ? null : "${local.http_protocol}${var.address}"
+
+  http_port  = var.encryption ? 443 : 80
+  encryption = var.encryption ? "SSL_TLS" : null
 }
 
 resource "uptime_check_blacklist" "this" {

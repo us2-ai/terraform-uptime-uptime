@@ -82,3 +82,13 @@ output "user" {
   description = "Map of user module outputs keyed by user name"
   value       = module.user
 }
+
+output "private_locations" {
+  description = "The account's private monitoring locations, including `country`, `location`, `name`, and address attributes. Empty unless `lookup_private_locations` is set or a check uses `use_private_locations`."
+  value       = local.private_locations
+}
+
+output "private_check_locations" {
+  description = "The `location` values of the account's private monitoring locations, in the form a check's `locations` list expects"
+  value       = local.private_check_locations
+}

@@ -32,4 +32,16 @@ variable "settings" {
   description = "Integration-specific settings"
   type        = any
   default     = {}
+
+
+
+  # Rejects attributes the module does not read; see allowlists.tf.
+  validation {
+    condition = length(setsubtract(try(keys(var.settings), []), local.allowed_attributes.settings)) == 0
+    error_message = format(
+      "var.settings has unsupported attribute(s): %s. Valid attributes (union across all integration types): %s.",
+      join(", ", setsubtract(try(keys(var.settings), []), local.allowed_attributes.settings)),
+      join(", ", local.allowed_attributes.settings)
+    )
+  }
 }

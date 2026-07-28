@@ -26,4 +26,41 @@ module "escalation" {
 ```
 
 <!-- BEGIN_TF_DOCS -->
+
+
+## Requirements
+
+| Name | Version |
+| ---- | ------- |
+| <a name="requirement_uptime"></a> [uptime](#requirement\_uptime) | >= 2.31 |
+
+## Providers
+
+| Name | Version |
+| ---- | ------- |
+| <a name="provider_uptime"></a> [uptime](#provider\_uptime) | >= 2.31 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+| ---- | ---- |
+| [uptime_check_escalations.this](https://registry.terraform.io/providers/uptime-com/uptime/latest/docs/resources/check_escalations) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+| ---- | ----------- | ---- | ------- | :------: |
+| <a name="input_create"></a> [create](#input\_create) | Create | `bool` | `true` | no |
+| <a name="input_check_id"></a> [check\_id](#input\_check\_id) | The ID of the check to attach escalations to | `number` | n/a | yes |
+| <a name="input_escalations"></a> [escalations](#input\_escalations) | List of escalation rules | <pre>list(object({<br/>    contact_groups = list(string)<br/>    num_repeats    = number<br/>    wait_time      = number<br/>  }))</pre> | n/a | yes |
+
+## Outputs
+
+| Name | Description |
+| ---- | ----------- |
+| <a name="output_check_id"></a> [check\_id](#output\_check\_id) | The check ID the escalations are attached to |
 <!-- END_TF_DOCS -->

@@ -140,6 +140,18 @@ variable "config" {
   description = "SSLcert configuration"
   type        = any
   default     = {}
+
+
+
+  # Rejects attributes the module does not read; see allowlists.tf.
+  validation {
+    condition = length(setsubtract(try(keys(var.config), []), local.allowed_attributes.config)) == 0
+    error_message = format(
+      "var.config has unsupported attribute(s): %s. Valid attributes: %s.",
+      join(", ", setsubtract(try(keys(var.config), []), local.allowed_attributes.config)),
+      join(", ", local.allowed_attributes.config)
+    )
+  }
 }
 
 variable "port" {
@@ -195,6 +207,18 @@ variable "pagespeed_config" {
   description = "Pagespeed check configuration"
   type        = any
   default     = {}
+
+
+
+  # Rejects attributes the module does not read; see allowlists.tf.
+  validation {
+    condition = length(setsubtract(try(keys(var.pagespeed_config), []), local.allowed_attributes.pagespeed_config)) == 0
+    error_message = format(
+      "var.pagespeed_config has unsupported attribute(s): %s. Valid attributes: %s.",
+      join(", ", setsubtract(try(keys(var.pagespeed_config), []), local.allowed_attributes.pagespeed_config)),
+      join(", ", local.allowed_attributes.pagespeed_config)
+    )
+  }
 }
 
 variable "pagespeed_headers" {
@@ -225,4 +249,16 @@ variable "cloudstatus_config" {
   EOT
   type        = any
   default     = {}
+
+
+
+  # Rejects attributes the module does not read; see allowlists.tf.
+  validation {
+    condition = length(setsubtract(try(keys(var.cloudstatus_config), []), local.allowed_attributes.cloudstatus_config)) == 0
+    error_message = format(
+      "var.cloudstatus_config has unsupported attribute(s): %s. Valid attributes: %s.",
+      join(", ", setsubtract(try(keys(var.cloudstatus_config), []), local.allowed_attributes.cloudstatus_config)),
+      join(", ", local.allowed_attributes.cloudstatus_config)
+    )
+  }
 }

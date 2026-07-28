@@ -5,20 +5,23 @@ resource "uptime_statuspage" "this" {
   allow_drill_down             = var.allow_drill_down
   allow_pdf_report             = var.allow_pdf_report
   allow_search_indexing        = var.allow_search_indexing
-  allow_subscriptions          = var.allow_subscriptions
   allow_subscriptions_email    = var.allow_subscriptions_email
   allow_subscriptions_rss      = var.allow_subscriptions_rss
   allow_subscriptions_slack    = var.allow_subscriptions_slack
   allow_subscriptions_sms      = var.allow_subscriptions_sms
+  allow_subscriptions_webhook  = var.allow_subscriptions_webhook
   auth_password                = var.auth_password
   auth_username                = var.auth_username
   cname                        = var.cname
   company_website_url          = var.company_website_url
   contact_email                = var.contact_email
   custom_css                   = var.custom_css
+  custom_css_inspire           = var.custom_css_inspire
   custom_footer_html           = var.custom_footer_html
+  custom_footer_html_inspire   = var.custom_footer_html_inspire
   custom_header_bg_color_hex   = var.custom_header_bg_color_hex
   custom_header_html           = var.custom_header_html
+  custom_header_html_inspire   = var.custom_header_html_inspire
   custom_header_text_color_hex = var.custom_header_text_color_hex
   default_history_date_range   = var.default_history_date_range
   description                  = var.description
@@ -40,6 +43,7 @@ resource "uptime_statuspage" "this" {
   theme                        = var.theme
   timezone                     = var.timezone
   uptime_calculation_type      = var.uptime_calculation_type
+  visibility_level             = var.visibility_level
 }
 
 locals {
@@ -57,6 +61,7 @@ resource "uptime_statuspage_component" "this" {
   group_id         = try(each.value.group_id, null)
   is_group         = try(each.value.is_group, null)
   service_id       = try(each.value.service_id, null)
+  sorting_weight   = try(each.value.sorting_weight, null)
   status           = try(each.value.status, null)
 }
 
