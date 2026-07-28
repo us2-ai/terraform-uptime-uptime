@@ -54,6 +54,29 @@ done
 (cd wrappers && terraform init -backend=false && terraform validate)
 ```
 
+### Tests
+
+Tests use `terraform test` with `mock_provider`, so they need no credentials and make no API
+calls. Each module with tests is its own test root:
+
+```bash
+for dir in . modules/check modules/statuspage modules/integration wrappers; do
+  (cd "$dir" && terraform init -backend=false && terraform test)
+done
+```
+
+Root tests cover composition: attribute validation, the `create_*` flags, private-location lookup
+gating. Submodule tests cover resource wiring, since a child module's resources and variables are
+only addressable when that module is the one under test — `expect_failures` cannot reach a child
+module's variable from the root.
+
+Two limitations worth knowing:
+
+- Provider mocking cannot set the length of a nested-attribute list, so
+  `data.uptime_private_locations` always returns an empty list under test.
+- Root-level global defaults (`try(each.value.interval, var.interval)`) are not observable through
+  outputs, so they are exercised indirectly rather than asserted.
+
 ### Regenerate documentation
 
 ```bash
@@ -66,7 +89,8 @@ terraform-docs .
 - Add new variables with meaningful `description` fields
 - Update `CHANGELOG.md` under the `[Unreleased]` section
 - Add or update examples when adding new features
-- Ensure `terraform fmt` and `terraform validate` pass before submitting
+- Ensure `terraform fmt`, `terraform validate`, and `terraform test` pass before submitting
+- Add a test for any bug you fix; every module with logic has a `tests/` directory
 - Keep the attribute allowlists up to date (see below)
 
 ## Attribute allowlists

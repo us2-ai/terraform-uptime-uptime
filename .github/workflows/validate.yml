@@ -76,6 +76,36 @@ jobs:
       - working-directory: wrappers
         run: terraform validate
 
+  test:
+    # terraform test with mock_provider — no credentials and no API calls. Run on both engines,
+    # since the module's validation behaviour depends on features they implement separately.
+    name: Test (${{ matrix.engine }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [terraform, opentofu]
+    steps:
+      - uses: actions/checkout@v4
+      - if: matrix.engine == 'terraform'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+      - if: matrix.engine == 'opentofu'
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_wrapper: false
+      - name: Run tests
+        run: |
+          bin=$([ "${{ matrix.engine }}" = "opentofu" ] && echo tofu || echo terraform)
+          status=0
+          for dir in . modules/check modules/statuspage modules/integration wrappers; do
+            echo "::group::$dir"
+            ( cd "$dir" && "$bin" init -backend=false && "$bin" test ) || status=1
+            echo "::endgroup::"
+          done
+          exit $status
+
   allowlist-drift:
     # An allowlist that omits an attribute the module reads makes that attribute
     # unsettable. Fail if the two ever disagree.

@@ -59,6 +59,10 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 
+- A check type that needs no address no longer requires one. `local.http_address` was built with
+  `join()`, which rejects null elements, and the local is evaluated regardless of which check type
+  is selected — so a `heartbeat` or `cloudstatus` check failed to plan unless an unrelated
+  `address` was supplied.
 - `create_check = false` and `create_integration = false` no longer break `terraform plan`. The
   `id` and `name` outputs were built with `coalesce()` over every possible check/integration
   resource, and `coalesce()` fails when every argument is null — which is exactly the case for a
@@ -89,6 +93,10 @@ All notable changes to this project will be documented in this file.
 - Add `allow_subscriptions_webhook` and `visibility_level` to the statuspage module
 - Add `sorting_weight` to statuspage components to control render order
 - Add a dedicated private-locations example
+- Add a `terraform test` suite (50 tests) covering attribute validation, the `create_*` flags,
+  private-location lookup gating, and resource wiring for checks, status pages, integrations, and
+  the wrapper. Tests use `mock_provider`, so they need no credentials, and run against both
+  Terraform and OpenTofu in CI.
 
 ### Notes
 
