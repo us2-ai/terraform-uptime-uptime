@@ -28,7 +28,6 @@ locals {
       is_paused                 = var.is_paused
       notes                     = var.notes
       sla                       = var.sla
-      tags                      = concat(try([module.tag[var.name].tag], []), var.additional_tags)
 
       config = {
         down_condition             = try(var.config.down_condition, null)
@@ -77,13 +76,15 @@ module "check" {
   source   = "./modules/check"
   for_each = { for k, v in var.checks : k => v if var.create }
 
-  create                    = try(each.value.create_check, true)
-  name                      = try(each.value.name, each.key)
-  type                      = each.value.type
-  address                   = try(each.value.address, var.address)
-  port                      = try(each.value.port, var.port)
-  script                    = try(each.value.script, var.script)
-  config                    = try(each.value.config, var.config)
+  create  = try(each.value.create_check, true)
+  name    = try(each.value.name, each.key)
+  type    = each.value.type
+  address = try(each.value.address, var.address)
+  port    = try(each.value.port, var.port)
+  script  = try(each.value.script, var.script)
+  # var.config configures the primary check group; a check's `config` block is a different,
+  # non-overlapping schema (sslcert options), so it deliberately does not inherit from it.
+  config                    = try(each.value.config, {})
   contact_groups            = try(each.value.contact_groups, var.contact_groups)
   interval                  = try(each.value.interval, var.interval)
   sensitivity               = try(each.value.sensitivity, var.sensitivity)

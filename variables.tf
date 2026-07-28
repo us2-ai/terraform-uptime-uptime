@@ -31,7 +31,7 @@ variable "color_hex" {
 }
 
 variable "config" {
-  description = "The configuration of primary group"
+  description = "The configuration of the primary check group. This is not a default for a check's `config` block, which is a different, non-overlapping schema."
   type        = any
   default     = {}
 }

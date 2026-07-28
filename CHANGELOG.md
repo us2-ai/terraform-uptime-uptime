@@ -57,6 +57,24 @@ All notable changes to this project will be documented in this file.
   `allow_subscriptions_webhook`. Since the attribute was already inert, this changes no
   infrastructure — only whether a dead setting is reported.
 
+### Bug Fixes
+
+- `create_check = false` and `create_integration = false` no longer break `terraform plan`. The
+  `id` and `name` outputs were built with `coalesce()` over every possible check/integration
+  resource, and `coalesce()` fails when every argument is null — which is exactly the case for a
+  deliberately disabled resource. Both now use `one()`, which yields `null` instead. The outputs
+  return `null` rather than erroring when the resource is not created.
+- The root `config` variable no longer leaks into checks. It is documented as the primary check
+  group's configuration, but was also passed as the default for each check's `config` block. The two
+  schemas do not overlap at all — group config is `down_condition`, `response_time`, `services`,
+  `tags`, `uptime_percent_calculation`; check config is the sslcert options (`crl`, `fingerprint`,
+  `issuer`, …) — so the inherited value could never be meaningful. Set `config` per check instead.
+- Remove a dead `tags` key from the generated primary group. The group module reads
+  `additional_tags`, so this value was silently discarded; the primary tag was already applied
+  through a separate path, so grouping is unaffected.
+- Add the missing provider version constraint to the 14 submodules that declared only a `source`,
+  so using a submodule directly cannot silently resolve a provider too old for its resources.
+
 ### Features
 
 - Add support for the `uptime_private_locations` data source (provider v2.29.0+). Checks can set
