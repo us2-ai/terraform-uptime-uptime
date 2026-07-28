@@ -20,8 +20,12 @@ All notable changes to this project will be documented in this file.
   named:
 
   ```
-  Unsupported attribute(s) in var.checks: typo.sorting_wieght, typo.use_private_location.
+  var.checks has unsupported attribute(s): typo.sorting_wieght, typo.use_private_location.
+  Valid attributes: address, check_version, cloudstatus_config, config, ...
   ```
+
+  The message lists the collection's valid attributes, so a misspelling can be corrected from the
+  error itself.
 
   Covered: the 17 root collections (`checks`, `statuspages`, `integrations`, `contacts`, `tags`,
   `groups`, `escalations`, `maintenances`, `maintenance_schedules`, `maintenance_notifications`,

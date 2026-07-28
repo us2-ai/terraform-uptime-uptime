@@ -34,12 +34,14 @@ variable "settings" {
   default     = {}
 
 
+
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = length(setsubtract(try(keys(var.settings), []), local.allowed_attributes.settings)) == 0
     error_message = format(
-      "Unsupported attribute(s) in var.settings: %s. Unknown attributes are rejected because they would otherwise be silently ignored; see the module documentation for the supported attributes.",
-      join(", ", setsubtract(try(keys(var.settings), []), local.allowed_attributes.settings))
+      "var.settings has unsupported attribute(s): %s. Valid attributes (union across all integration types): %s.",
+      join(", ", setsubtract(try(keys(var.settings), []), local.allowed_attributes.settings)),
+      join(", ", local.allowed_attributes.settings)
     )
   }
 }

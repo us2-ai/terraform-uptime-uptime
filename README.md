@@ -98,8 +98,12 @@ untouched. As of v2.0.0 each collection also validates its attribute *names*, so
 unsupported attribute fails instead of being silently discarded:
 
 ```
-Unsupported attribute(s) in var.checks: homepage.use_private_location.
+var.checks has unsupported attribute(s): homepage.use_private_location.
+Valid attributes: address, check_version, cloudstatus_config, config, ...
 ```
+
+The error lists the collection's valid attributes, so the correct spelling is in the message rather
+than something to go look up.
 
 Attributes nested inside a collection (statuspage `components`, check `config`, integration
 `settings`) are validated at `terraform plan` rather than `terraform validate`, because Terraform

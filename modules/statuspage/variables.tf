@@ -285,18 +285,20 @@ variable "components" {
   default     = {}
 
 
+
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
       for k, v in var.components : length(setsubtract(try(keys(v), []), local.allowed_attributes.components)) == 0
     ])
     error_message = format(
-      "Unsupported attribute(s) in var.components: %s. Unknown attributes are rejected because they would otherwise be silently ignored; see the module documentation for the supported attributes.",
+      "var.components has unsupported attribute(s): %s. Valid attributes: %s.",
       join(", ", flatten([
         for k, v in var.components : [
           for a in setsubtract(try(keys(v), []), local.allowed_attributes.components) : format("%s.%s", k, a)
         ]
-      ]))
+      ])),
+      join(", ", local.allowed_attributes.components)
     )
   }
 }
@@ -307,18 +309,20 @@ variable "incidents" {
   default     = {}
 
 
+
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
       for k, v in var.incidents : length(setsubtract(try(keys(v), []), local.allowed_attributes.incidents)) == 0
     ])
     error_message = format(
-      "Unsupported attribute(s) in var.incidents: %s. Unknown attributes are rejected because they would otherwise be silently ignored; see the module documentation for the supported attributes.",
+      "var.incidents has unsupported attribute(s): %s. Valid attributes: %s.",
       join(", ", flatten([
         for k, v in var.incidents : [
           for a in setsubtract(try(keys(v), []), local.allowed_attributes.incidents) : format("%s.%s", k, a)
         ]
-      ]))
+      ])),
+      join(", ", local.allowed_attributes.incidents)
     )
   }
 }
@@ -329,18 +333,20 @@ variable "metrics" {
   default     = {}
 
 
+
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
       for k, v in var.metrics : length(setsubtract(try(keys(v), []), local.allowed_attributes.metrics)) == 0
     ])
     error_message = format(
-      "Unsupported attribute(s) in var.metrics: %s. Unknown attributes are rejected because they would otherwise be silently ignored; see the module documentation for the supported attributes.",
+      "var.metrics has unsupported attribute(s): %s. Valid attributes: %s.",
       join(", ", flatten([
         for k, v in var.metrics : [
           for a in setsubtract(try(keys(v), []), local.allowed_attributes.metrics) : format("%s.%s", k, a)
         ]
-      ]))
+      ])),
+      join(", ", local.allowed_attributes.metrics)
     )
   }
 }
@@ -351,18 +357,20 @@ variable "subscribers" {
   default     = {}
 
 
+
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
       for k, v in var.subscribers : length(setsubtract(try(keys(v), []), local.allowed_attributes.subscribers)) == 0
     ])
     error_message = format(
-      "Unsupported attribute(s) in var.subscribers: %s. Unknown attributes are rejected because they would otherwise be silently ignored; see the module documentation for the supported attributes.",
+      "var.subscribers has unsupported attribute(s): %s. Valid attributes: %s.",
       join(", ", flatten([
         for k, v in var.subscribers : [
           for a in setsubtract(try(keys(v), []), local.allowed_attributes.subscribers) : format("%s.%s", k, a)
         ]
-      ]))
+      ])),
+      join(", ", local.allowed_attributes.subscribers)
     )
   }
 }
@@ -373,18 +381,20 @@ variable "subscription_domain_allows" {
   default     = {}
 
 
+
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
       for k, v in var.subscription_domain_allows : length(setsubtract(try(keys(v), []), local.allowed_attributes.subscription_domain_allows)) == 0
     ])
     error_message = format(
-      "Unsupported attribute(s) in var.subscription_domain_allows: %s. Unknown attributes are rejected because they would otherwise be silently ignored; see the module documentation for the supported attributes.",
+      "var.subscription_domain_allows has unsupported attribute(s): %s. Valid attributes: %s.",
       join(", ", flatten([
         for k, v in var.subscription_domain_allows : [
           for a in setsubtract(try(keys(v), []), local.allowed_attributes.subscription_domain_allows) : format("%s.%s", k, a)
         ]
-      ]))
+      ])),
+      join(", ", local.allowed_attributes.subscription_domain_allows)
     )
   }
 }
@@ -395,18 +405,20 @@ variable "subscription_domain_blocks" {
   default     = {}
 
 
+
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
       for k, v in var.subscription_domain_blocks : length(setsubtract(try(keys(v), []), local.allowed_attributes.subscription_domain_blocks)) == 0
     ])
     error_message = format(
-      "Unsupported attribute(s) in var.subscription_domain_blocks: %s. Unknown attributes are rejected because they would otherwise be silently ignored; see the module documentation for the supported attributes.",
+      "var.subscription_domain_blocks has unsupported attribute(s): %s. Valid attributes: %s.",
       join(", ", flatten([
         for k, v in var.subscription_domain_blocks : [
           for a in setsubtract(try(keys(v), []), local.allowed_attributes.subscription_domain_blocks) : format("%s.%s", k, a)
         ]
-      ]))
+      ])),
+      join(", ", local.allowed_attributes.subscription_domain_blocks)
     )
   }
 }
@@ -417,18 +429,20 @@ variable "users" {
   default     = {}
 
 
+
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
       for k, v in var.users : length(setsubtract(try(keys(v), []), local.allowed_attributes.users)) == 0
     ])
     error_message = format(
-      "Unsupported attribute(s) in var.users: %s. Unknown attributes are rejected because they would otherwise be silently ignored; see the module documentation for the supported attributes.",
+      "var.users has unsupported attribute(s): %s. Valid attributes: %s.",
       join(", ", flatten([
         for k, v in var.users : [
           for a in setsubtract(try(keys(v), []), local.allowed_attributes.users) : format("%s.%s", k, a)
         ]
-      ]))
+      ])),
+      join(", ", local.allowed_attributes.users)
     )
   }
 }

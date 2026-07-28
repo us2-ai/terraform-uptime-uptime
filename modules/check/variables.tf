@@ -142,12 +142,14 @@ variable "config" {
   default     = {}
 
 
+
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = length(setsubtract(try(keys(var.config), []), local.allowed_attributes.config)) == 0
     error_message = format(
-      "Unsupported attribute(s) in var.config: %s. Unknown attributes are rejected because they would otherwise be silently ignored; see the module documentation for the supported attributes.",
-      join(", ", setsubtract(try(keys(var.config), []), local.allowed_attributes.config))
+      "var.config has unsupported attribute(s): %s. Valid attributes: %s.",
+      join(", ", setsubtract(try(keys(var.config), []), local.allowed_attributes.config)),
+      join(", ", local.allowed_attributes.config)
     )
   }
 }
@@ -207,12 +209,14 @@ variable "pagespeed_config" {
   default     = {}
 
 
+
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = length(setsubtract(try(keys(var.pagespeed_config), []), local.allowed_attributes.pagespeed_config)) == 0
     error_message = format(
-      "Unsupported attribute(s) in var.pagespeed_config: %s. Unknown attributes are rejected because they would otherwise be silently ignored; see the module documentation for the supported attributes.",
-      join(", ", setsubtract(try(keys(var.pagespeed_config), []), local.allowed_attributes.pagespeed_config))
+      "var.pagespeed_config has unsupported attribute(s): %s. Valid attributes: %s.",
+      join(", ", setsubtract(try(keys(var.pagespeed_config), []), local.allowed_attributes.pagespeed_config)),
+      join(", ", local.allowed_attributes.pagespeed_config)
     )
   }
 }
@@ -247,12 +251,14 @@ variable "cloudstatus_config" {
   default     = {}
 
 
+
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = length(setsubtract(try(keys(var.cloudstatus_config), []), local.allowed_attributes.cloudstatus_config)) == 0
     error_message = format(
-      "Unsupported attribute(s) in var.cloudstatus_config: %s. Unknown attributes are rejected because they would otherwise be silently ignored; see the module documentation for the supported attributes.",
-      join(", ", setsubtract(try(keys(var.cloudstatus_config), []), local.allowed_attributes.cloudstatus_config))
+      "var.cloudstatus_config has unsupported attribute(s): %s. Valid attributes: %s.",
+      join(", ", setsubtract(try(keys(var.cloudstatus_config), []), local.allowed_attributes.cloudstatus_config)),
+      join(", ", local.allowed_attributes.cloudstatus_config)
     )
   }
 }
