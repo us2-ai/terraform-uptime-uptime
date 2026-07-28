@@ -2,6 +2,18 @@ locals {
   create_tag   = var.create && var.create_tag
   create_group = var.create && var.create_group
 
+  # Only hit the private locations endpoint when something actually consumes it:
+  # either a check opts in, or the caller asked for the outputs directly.
+  lookup_private_locations = var.create && (
+    var.lookup_private_locations ||
+    anytrue([for _, v in var.checks : try(v.use_private_locations, false)])
+  )
+
+  private_locations = try(data.uptime_private_locations.this[0].locations, [])
+
+  # Checks match private locations on the `location` field, not the user-facing `name`.
+  private_check_locations = [for l in local.private_locations : l.location]
+
   primary_tag = local.create_tag ? {
     "${var.name}" = {
       color_hex = var.color_hex
@@ -35,6 +47,10 @@ locals {
   groups = merge(local.primary_group, var.groups)
 }
 
+data "uptime_private_locations" "this" {
+  count = local.lookup_private_locations ? 1 : 0
+}
+
 module "tag" {
   source   = "./modules/tag"
   for_each = { for k, v in local.tags : k => v if var.create }
@@ -61,36 +77,38 @@ module "check" {
   source   = "./modules/check"
   for_each = { for k, v in var.checks : k => v if var.create }
 
-  create                      = try(each.value.create_check, true)
-  name                        = try(each.value.name, each.key)
-  type                        = each.value.type
-  address                     = try(each.value.address, var.address)
-  port                        = try(each.value.port, var.port)
-  script                      = try(each.value.script, var.script)
-  config                      = try(each.value.config, var.config)
-  contact_groups              = try(each.value.contact_groups, var.contact_groups)
-  interval                    = try(each.value.interval, var.interval)
-  sensitivity                 = try(each.value.sensitivity, var.sensitivity)
-  num_retries                 = try(each.value.num_retries, var.num_retries)
-  encryption                  = try(each.value.encryption, var.encryption)
-  dns_record_type             = try(each.value.dns_record_type, var.dns_record_type)
-  dns_server                  = try(each.value.dns_server, var.dns_server)
-  expect_string               = try(each.value.expect_string, var.expect_string)
-  expect_string_type          = try(each.value.expect_string_type, var.expect_string_type)
-  headers                     = try(each.value.headers, var.headers)
-  username                    = try(each.value.username, var.username)
-  password                    = try(each.value.password, var.password)
-  proxy                       = try(each.value.proxy, var.proxy)
-  send_string                 = try(each.value.send_string, var.send_string)
-  status_code                 = try(each.value.status_code, var.status_code)
-  check_version               = try(each.value.check_version, var.check_version)
-  include_in_global_metrics   = try(each.value.include_in_global_metrics, var.include_in_global_metrics)
-  is_paused                   = try(each.value.is_paused, var.is_paused)
-  notes                       = try(each.value.notes, var.notes)
-  tags                        = concat(try([module.tag[var.name].tag], []), try(each.value.tags, []), var.additional_tags)
-  threshold                   = try(each.value.threshold, var.threshold)
-  sla                         = try(each.value.sla, var.sla)
-  locations                   = try(each.value.locations, var.locations)
+  create                    = try(each.value.create_check, true)
+  name                      = try(each.value.name, each.key)
+  type                      = each.value.type
+  address                   = try(each.value.address, var.address)
+  port                      = try(each.value.port, var.port)
+  script                    = try(each.value.script, var.script)
+  config                    = try(each.value.config, var.config)
+  contact_groups            = try(each.value.contact_groups, var.contact_groups)
+  interval                  = try(each.value.interval, var.interval)
+  sensitivity               = try(each.value.sensitivity, var.sensitivity)
+  num_retries               = try(each.value.num_retries, var.num_retries)
+  encryption                = try(each.value.encryption, var.encryption)
+  dns_record_type           = try(each.value.dns_record_type, var.dns_record_type)
+  dns_server                = try(each.value.dns_server, var.dns_server)
+  expect_string             = try(each.value.expect_string, var.expect_string)
+  expect_string_type        = try(each.value.expect_string_type, var.expect_string_type)
+  headers                   = try(each.value.headers, var.headers)
+  username                  = try(each.value.username, var.username)
+  password                  = try(each.value.password, var.password)
+  proxy                     = try(each.value.proxy, var.proxy)
+  send_string               = try(each.value.send_string, var.send_string)
+  status_code               = try(each.value.status_code, var.status_code)
+  check_version             = try(each.value.check_version, var.check_version)
+  include_in_global_metrics = try(each.value.include_in_global_metrics, var.include_in_global_metrics)
+  is_paused                 = try(each.value.is_paused, var.is_paused)
+  notes                     = try(each.value.notes, var.notes)
+  tags                      = concat(try([module.tag[var.name].tag], []), try(each.value.tags, []), var.additional_tags)
+  threshold                 = try(each.value.threshold, var.threshold)
+  sla                       = try(each.value.sla, var.sla)
+  locations = try(each.value.use_private_locations, false) ? distinct(concat(
+    try(each.value.locations, []), local.private_check_locations
+  )) : try(each.value.locations, var.locations)
   use_ip_version              = try(each.value.use_ip_version, var.use_ip_version)
   send_resolved_notifications = try(each.value.send_resolved_notifications, var.send_resolved_notifications)
   sla_uptime                  = try(each.value.sla_uptime, var.sla_uptime)
@@ -185,15 +203,19 @@ module "statuspage" {
   allow_subscriptions_rss      = try(each.value.allow_subscriptions_rss, null)
   allow_subscriptions_slack    = try(each.value.allow_subscriptions_slack, null)
   allow_subscriptions_sms      = try(each.value.allow_subscriptions_sms, null)
+  allow_subscriptions_webhook  = try(each.value.allow_subscriptions_webhook, null)
   auth_password                = try(each.value.auth_password, null)
   auth_username                = try(each.value.auth_username, null)
   cname                        = try(each.value.cname, null)
   company_website_url          = try(each.value.company_website_url, null)
   contact_email                = try(each.value.contact_email, null)
   custom_css                   = try(each.value.custom_css, null)
+  custom_css_inspire           = try(each.value.custom_css_inspire, null)
   custom_footer_html           = try(each.value.custom_footer_html, null)
+  custom_footer_html_inspire   = try(each.value.custom_footer_html_inspire, null)
   custom_header_bg_color_hex   = try(each.value.custom_header_bg_color_hex, null)
   custom_header_html           = try(each.value.custom_header_html, null)
+  custom_header_html_inspire   = try(each.value.custom_header_html_inspire, null)
   custom_header_text_color_hex = try(each.value.custom_header_text_color_hex, null)
   default_history_date_range   = try(each.value.default_history_date_range, null)
   description                  = try(each.value.description, null)
@@ -215,6 +237,7 @@ module "statuspage" {
   theme                        = try(each.value.theme, null)
   timezone                     = try(each.value.timezone, null)
   uptime_calculation_type      = try(each.value.uptime_calculation_type, null)
+  visibility_level             = try(each.value.visibility_level, null)
   components                   = try(each.value.components, {})
   incidents                    = try(each.value.incidents, {})
   metrics                      = try(each.value.metrics, {})

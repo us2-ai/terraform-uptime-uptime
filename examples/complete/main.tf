@@ -145,19 +145,30 @@ module "uptime" {
     public = {
       name                  = "Service Status"
       slug                  = "status"
-      allow_subscriptions   = true
       show_active_incidents = true
       show_history_tab      = true
       timezone              = "UTC"
 
+      # Subscriptions are enabled per channel; the aggregate `allow_subscriptions`
+      # attribute is derived by the API and is deprecated.
+      allow_subscriptions_email = true
+      allow_subscriptions_rss   = true
+
+      # API-managed status pages render with the INSPIRE theme, so branding must
+      # use the `_inspire` attributes. The legacy variants have no effect here.
+      custom_header_html_inspire = "<div class=\"banner\">Example Corp</div>"
+      custom_css_inspire         = ".banner { font-weight: 600; }"
+
       components = {
         website = {
-          name       = "Website"
-          service_id = module.uptime.check["homepage"].id
+          name           = "Website"
+          service_id     = module.uptime.check["homepage"].id
+          sorting_weight = 10
         }
         dns = {
-          name       = "DNS"
-          service_id = module.uptime.check["dns"].id
+          name           = "DNS"
+          service_id     = module.uptime.check["dns"].id
+          sorting_weight = 20
         }
       }
     }

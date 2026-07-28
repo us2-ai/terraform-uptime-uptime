@@ -6,4 +6,4 @@ This example demonstrates the resources added in v1.2.0:
 - account-level **maintenance schedules** — a recurring RRULE window and a one-off window, and
 - **maintenance notifications** that alert a contact group before and after a window.
 
-It requires the `uptime-com/uptime` provider `>= 2.28`.
+It requires the `uptime-com/uptime` provider `>= 2.31`.

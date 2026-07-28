@@ -89,6 +89,23 @@ cachet, datadog, geckoboard, jira_servicedesk, klipfolio, microsoft_teams, opsge
 - **Service Variables** — Inject credential values into check configurations securely
 - **Subaccounts** — Manage subaccounts within your Uptime.com account
 - **Users** — Manage account team members with access levels and 2FA
+- **Private Locations** — Resolve the account's private monitoring locations and target checks at them
+
+## Strict attribute validation
+
+Collection variables are typed `any` so that per-type check configuration can pass through
+untouched. As of v2.0.0 each collection also validates its attribute *names*, so a misspelled or
+unsupported attribute fails instead of being silently discarded:
+
+```
+Unsupported attribute(s) in var.checks: homepage.use_private_location.
+```
+
+Attributes nested inside a collection (statuspage `components`, check `config`, integration
+`settings`) are validated at `terraform plan` rather than `terraform validate`, because Terraform
+does not expand module `for_each` during validate. Blocks passed straight through to the provider —
+`sla`, credential `secret`, dashboard `alerts`/`metrics`/`services`/`selected`, maintenance
+`schedule`, group `config` — are type-checked by the provider itself.
 
 ## Submodules
 
@@ -118,14 +135,15 @@ cachet, datadog, geckoboard, jira_servicedesk, klipfolio, microsoft_teams, opsge
 - [Complete](./examples/complete/) — Multiple check types, integrations, escalations, and maintenance
 - [Integrations](./examples/integrations/) — Various integration configurations
 - [Maintenance](./examples/maintenance/) — Cloud status check, maintenance schedules, and notifications
+- [Private Locations](./examples/private-locations/) — Targeting checks at the account's private monitoring locations
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| terraform | >= 1.6 |
-| uptime | >= 2.28 |
+| terraform | >= 1.9 |
+| uptime | >= 2.31 |
 
 ## Providers
 
@@ -193,6 +211,7 @@ No providers.
 | status\_code | Expected HTTP code returned | `string` | `null` | no |
 | check\_version | Check version | `number` | `null` | no |
 | use\_ip\_version | Use IP Version | `string` | `null` | no |
+| lookup\_private\_locations | Expose the account's private monitoring locations via outputs | `bool` | `false` | no |
 | send\_resolved\_notifications | Send resolved notifications | `bool` | `null` | no |
 | sla\_uptime | SLA uptime (string, for RUM2 checks) | `string` | `null` | no |
 | integrations | Integrations | `any` | `{}` | no |
@@ -231,6 +250,8 @@ No providers.
 | service\_variable | Service variable module outputs |
 | subaccount | Subaccount module outputs |
 | user | User module outputs |
+| private\_locations | Private monitoring location records, including country |
+| private\_check\_locations | Private location values in the form a check's locations list expects |
 <!-- END_TF_DOCS -->
 
 ## License

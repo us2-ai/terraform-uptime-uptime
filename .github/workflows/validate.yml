@@ -16,20 +16,47 @@ jobs:
       - run: terraform fmt -recursive -check
 
   validate-root:
-    name: Validate Root
+    # The attribute allowlists reference locals from a validation block, which needs >= 1.9.
+    # Test the declared floor as well as current releases, on both engines.
+    name: Validate Root (${{ matrix.engine }} ${{ matrix.version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - engine: terraform
+            version: 1.9.0
+          - engine: terraform
+            version: latest
+          - engine: opentofu
+            version: 1.9.0
+          - engine: opentofu
+            version: latest
     steps:
       - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
-      - run: terraform init -backend=false
-      - run: terraform validate
+      - if: matrix.engine == 'terraform'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ matrix.version }}
+          terraform_wrapper: false
+      - if: matrix.engine == 'opentofu'
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: ${{ matrix.version }}
+          tofu_wrapper: false
+      - name: Validate
+        run: |
+          bin=$([ "${{ matrix.engine }}" = "opentofu" ] && echo tofu || echo terraform)
+          "$bin" init -backend=false
+          "$bin" validate
 
   validate-examples:
     name: Validate Examples
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        example: [simple, complete, integrations, maintenance]
+        example: [simple, complete, integrations, maintenance, private-locations]
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -48,3 +75,13 @@ jobs:
         run: terraform init -backend=false
       - working-directory: wrappers
         run: terraform validate
+
+  allowlist-drift:
+    # An allowlist that omits an attribute the module reads makes that attribute
+    # unsettable. Fail if the two ever disagree.
+    name: Allowlist Drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare allowlists against attributes the module reads
+        run: python3 scripts/check_allowlists.py
