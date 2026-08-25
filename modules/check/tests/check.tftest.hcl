@@ -162,3 +162,35 @@ run "an_address_less_check_type_does_not_need_an_address" {
     error_message = "a heartbeat check should not require an address"
   }
 }
+
+run "use_ip_version_reaches_the_http_resource" {
+  command = apply
+
+  # Regression: provider 2.34.0 added use_ip_version to uptime_check_http and uptime_check_api.
+  # Before that the module could not set it on either type, so a caller's value was dropped.
+  variables {
+    type           = "http"
+    address        = "example.com"
+    use_ip_version = "IPV6"
+  }
+
+  assert {
+    condition     = uptime_check_http.this[0].use_ip_version == "IPV6"
+    error_message = "use_ip_version was not passed through to the http resource"
+  }
+}
+
+run "use_ip_version_reaches_the_api_resource" {
+  command = apply
+
+  variables {
+    type           = "api"
+    script         = "[]"
+    use_ip_version = "IPV4"
+  }
+
+  assert {
+    condition     = uptime_check_api.this[0].use_ip_version == "IPV4"
+    error_message = "use_ip_version was not passed through to the api resource"
+  }
+}

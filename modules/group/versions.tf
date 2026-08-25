@@ -2,7 +2,7 @@ terraform {
   required_providers {
     uptime = {
       source  = "uptime-com/uptime"
-      version = ">= 2.31"
+      version = ">= 2.34"
     }
   }
 }

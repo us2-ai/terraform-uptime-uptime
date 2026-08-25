@@ -134,6 +134,7 @@ resource "uptime_check_http" "this" {
   status_code               = var.status_code
   tags                      = var.tags
   threshold                 = var.threshold
+  use_ip_version            = var.use_ip_version
   username                  = var.username
   version                   = var.check_version
 }
@@ -197,6 +198,7 @@ resource "uptime_check_api" "this" {
   sla                       = var.sla
   tags                      = var.tags
   threshold                 = var.threshold
+  use_ip_version            = var.use_ip_version
 }
 
 resource "uptime_check_heartbeat" "this" {
