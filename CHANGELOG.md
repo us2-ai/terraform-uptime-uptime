@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Notes
+
+- Every `versions.tf` now declares the provider floor. `modules/check`, `modules/integration`,
+  `modules/statuspage` and `wrappers` declared only `source`, so their generated Requirements
+  tables read `n/a` and calling one of them directly was unconstrained. The other 14 submodules
+  already pinned it. Nothing changes for callers who use the module through the root, which
+  already carried the floor.
+
+  `required_version = ">= 1.9"` stays on those same four and nowhere else, which is deliberate
+  rather than the same oversight. They are the four that are their own `terraform test` roots,
+  and the four whose allowlists reference locals from a validation block, which is the feature
+  that needs 1.9.
+
 ## [2.1.0] - 2026-08-25
 
 ### Features
