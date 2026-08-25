@@ -14,4 +14,4 @@ outputs on their own. Accounts with no private location monitors resolve to an e
 Note that checks match private locations on the `location` field rather than the user-facing
 `name`; `private_check_locations` returns the values in the form a check expects.
 
-It requires the `uptime-com/uptime` provider `>= 2.31`.
+It requires the `uptime-com/uptime` provider `>= 2.34`.

@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2026-08-25
+
+### Features
+
+- `use_ip_version` now reaches `http` and `api` checks. The attribute was already accepted on the
+  root `checks` collection and passed down to the check module, but the module set it on only 8 of
+  the provider's check resources, so a value given for an `http` or `api` check was accepted and
+  then dropped. The provider added the attribute to both resources in 2.34.0, and all 10 check
+  resources that support it now receive it.
+
+- Minimum provider version raised from 2.31 to 2.34. `use_ip_version` only exists on
+  `uptime_check_http` and `uptime_check_api` from provider 2.34.0, so wiring it in below that floor
+  is not possible. No other schema change landed between 2.31.0 and 2.34.0, so this is the only
+  reason the floor moves.
+
+  Run `terraform init -upgrade` to pick it up, and read the behavior change under Notes first,
+  because it can change checks this module did not previously touch.
+
+### Notes
+
+- **Provider 2.34.0 changes how an unset `use_ip_version` is applied, and this module passes that
+  through.** The provider now sends the field as a pointer rather than omitting an empty value, so
+  a check whose IP version was pinned outside Terraform, with no `use_ip_version` in the module
+  configuration, is reset to Any on the next apply.
+
+  On the 8 check types that already had the attribute (`icmp`, `imap`, `ntp`, `pop`, `smtp`, `ssh`,
+  `tcp`, `udp`) that apply previously failed with "Provider produced inconsistent result after
+  apply", so the reset replaces a hard error. On `http` and `api` the attribute is new to this
+  module, so the reset is new too.
+
+  Set `use_ip_version` explicitly on any check whose IP version you want to keep pinned, and read
+  `terraform plan` before applying.
+
+  This ships as a minor release because the provider shipped the same change as one, in 2.34.0.
+
 ## [2.0.0] - 2026-07-28
 
 ### Breaking Changes

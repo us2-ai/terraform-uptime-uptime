@@ -26,13 +26,13 @@ module "group" {
 
 | Name | Version |
 | ---- | ------- |
-| <a name="requirement_uptime"></a> [uptime](#requirement\_uptime) | >= 2.31 |
+| <a name="requirement_uptime"></a> [uptime](#requirement\_uptime) | >= 2.34 |
 
 ## Providers
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_uptime"></a> [uptime](#provider\_uptime) | >= 2.31 |
+| <a name="provider_uptime"></a> [uptime](#provider\_uptime) | >= 2.34 |
 
 ## Modules
 
