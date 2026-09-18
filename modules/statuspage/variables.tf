@@ -30,17 +30,6 @@ variable "allow_search_indexing" {
   default     = null
 }
 
-variable "allow_subscriptions" {
-  description = "REMOVED: the API derives this from the per-channel `allow_subscriptions_*` flags and ignores it on writes. Retained only so that existing configurations fail with an actionable error instead of silently having no effect. Use the per-channel flags instead."
-  type        = bool
-  default     = null
-
-  validation {
-    condition     = var.allow_subscriptions == null
-    error_message = "allow_subscriptions is no longer honored by the Uptime.com API, which derives it from the per-channel flags. Remove it and set allow_subscriptions_email, allow_subscriptions_rss, allow_subscriptions_slack, allow_subscriptions_sms, or allow_subscriptions_webhook instead."
-  }
-}
-
 variable "allow_subscriptions_email" {
   description = "Allow email subscriptions"
   type        = bool
@@ -284,8 +273,6 @@ variable "components" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -307,8 +294,6 @@ variable "incidents" {
   description = "Status page incidents"
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
@@ -332,8 +317,6 @@ variable "metrics" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -355,8 +338,6 @@ variable "subscribers" {
   description = "Status page subscribers"
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
@@ -380,8 +361,6 @@ variable "subscription_domain_allows" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -404,8 +383,6 @@ variable "subscription_domain_blocks" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -427,8 +404,6 @@ variable "users" {
   description = "Status page users"
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {

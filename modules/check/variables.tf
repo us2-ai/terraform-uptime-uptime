@@ -141,8 +141,6 @@ variable "config" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = length(setsubtract(try(keys(var.config), []), local.allowed_attributes.config)) == 0
@@ -208,8 +206,6 @@ variable "pagespeed_config" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = length(setsubtract(try(keys(var.pagespeed_config), []), local.allowed_attributes.pagespeed_config)) == 0
@@ -249,8 +245,6 @@ variable "cloudstatus_config" {
   EOT
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {

@@ -96,21 +96,6 @@ module "uptime" {
     }
   }
 
-  maintenances = {
-    weekly = {
-      check_id = module.uptime.check["homepage"].id
-      state    = "ACTIVE"
-      schedule = [
-        {
-          type      = "WEEKLY"
-          weekdays  = ["SUN"]
-          from_time = "02:00"
-          to_time   = "04:00"
-        }
-      ]
-    }
-  }
-
   maintenance_schedules = {
     weekly-patching = {
       schedule_type                   = "RRULE"

@@ -125,8 +125,6 @@ variable "groups" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -148,8 +146,6 @@ variable "tags" {
   description = "Tags"
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
@@ -178,8 +174,6 @@ variable "checks" {
   description = "Checks"
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
@@ -294,8 +288,6 @@ variable "integrations" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -318,8 +310,6 @@ variable "escalations" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -337,27 +327,15 @@ variable "escalations" {
   }
 }
 
+# tflint-ignore: terraform_unused_declarations # Tombstone: referenced only by its own validation, on purpose. Removed in 4.0.0.
 variable "maintenances" {
-  description = "Maintenances"
+  description = "REMOVED in v3.0.0. Provider 3.0.0 dropped `uptime_check_maintenance`, so per-check maintenance windows can no longer be managed here. Retained only so that an existing configuration fails with a pointer to the migration steps instead of an unexplained \"Unsupported argument\". Use `maintenance_schedules` and `maintenance_notifications` instead; see UPGRADE-3.0.md."
   type        = any
   default     = {}
 
-
-
-  # Rejects attributes the module does not read; see allowlists.tf.
   validation {
-    condition = alltrue([
-      for k, v in var.maintenances : length(setsubtract(try(keys(v), []), local.allowed_attributes.maintenances)) == 0
-    ])
-    error_message = format(
-      "var.maintenances has unsupported attribute(s): %s. Valid attributes: %s.",
-      join(", ", flatten([
-        for k, v in var.maintenances : [
-          for a in setsubtract(try(keys(v), []), local.allowed_attributes.maintenances) : format("%s.%s", k, a)
-        ]
-      ])),
-      join(", ", local.allowed_attributes.maintenances)
-    )
+    condition     = length(var.maintenances) == 0
+    error_message = "var.maintenances is no longer supported: provider 3.0.0 removed uptime_check_maintenance. Migrate each window to maintenance_schedules while still on module 2.x and provider 2.34, then upgrade. UPGRADE-3.0.md has the steps and the terraform state rm addresses."
   }
 }
 
@@ -365,8 +343,6 @@ variable "maintenance_schedules" {
   description = "Maintenance Schedules"
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
@@ -390,8 +366,6 @@ variable "maintenance_notifications" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -413,8 +387,6 @@ variable "contacts" {
   description = "Contacts"
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
@@ -438,8 +410,6 @@ variable "statuspages" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -461,8 +431,6 @@ variable "credentials" {
   description = "Credentials"
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
@@ -486,8 +454,6 @@ variable "dashboards" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -509,8 +475,6 @@ variable "sla_reports" {
   description = "SLA Reports"
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
@@ -534,8 +498,6 @@ variable "scheduled_reports" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -557,8 +519,6 @@ variable "service_variables" {
   description = "Service Variables"
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
@@ -582,8 +542,6 @@ variable "subaccounts" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = alltrue([
@@ -605,8 +563,6 @@ variable "users" {
   description = "Users"
   type        = any
   default     = {}
-
-
 
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {

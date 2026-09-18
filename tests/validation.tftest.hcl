@@ -108,3 +108,16 @@ run "rejects_a_group_attribute_the_module_never_read" {
 
   expect_failures = [var.groups]
 }
+
+run "rejects_the_removed_maintenances_collection" {
+  command = plan
+
+  # Provider 3.0.0 removed uptime_check_maintenance. The variable is retained only so that a
+  # configuration carried over from 2.x fails with the migration steps named, rather than with
+  # an unexplained "Unsupported argument".
+  variables {
+    maintenances = { weekly = { check_id = 1, state = "ACTIVE" } }
+  }
+
+  expect_failures = [var.maintenances]
+}

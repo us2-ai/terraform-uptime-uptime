@@ -23,11 +23,6 @@ output "escalation" {
   value       = module.uptime.escalation
 }
 
-output "maintenance" {
-  description = "Maintenance outputs"
-  value       = module.uptime.maintenance
-}
-
 output "maintenance_schedule" {
   description = "Maintenance schedule outputs"
   value       = module.uptime.maintenance_schedule

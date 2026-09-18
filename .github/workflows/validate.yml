@@ -16,8 +16,10 @@ jobs:
       - run: terraform fmt -recursive -check
 
   validate-root:
-    # The attribute allowlists reference locals from a validation block, which needs >= 1.9.
-    # Test the declared floor as well as current releases, on both engines.
+    # The attribute allowlists reference locals from a validation block, which needs >= 1.9, and
+    # OpenTofu below 1.10.3 crashes in `tofu test` on this module (see CHANGELOG 3.0.0), which is
+    # why the floor is a patch release. Test the declared floor as well as current releases, on
+    # both engines.
     name: Validate Root (${{ matrix.engine }} ${{ matrix.version }})
     runs-on: ubuntu-latest
     strategy:
@@ -25,11 +27,11 @@ jobs:
       matrix:
         include:
           - engine: terraform
-            version: 1.9.0
+            version: 1.10.3
           - engine: terraform
             version: latest
           - engine: opentofu
-            version: 1.9.0
+            version: 1.10.3
           - engine: opentofu
             version: latest
     steps:
@@ -78,22 +80,34 @@ jobs:
 
   test:
     # terraform test with mock_provider — no credentials and no API calls. Run on both engines,
-    # since the module's validation behaviour depends on features they implement separately.
-    name: Test (${{ matrix.engine }})
+    # since the module's validation behaviour depends on features they implement separately, and
+    # on the declared floor as well as latest: until 3.0.0 this job ran only on latest, which is
+    # how an OpenTofu 1.9.0 crash in these suites went unnoticed while 1.9 was the floor.
+    name: Test (${{ matrix.engine }} ${{ matrix.version }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        engine: [terraform, opentofu]
+        include:
+          - engine: terraform
+            version: 1.10.3
+          - engine: terraform
+            version: latest
+          - engine: opentofu
+            version: 1.10.3
+          - engine: opentofu
+            version: latest
     steps:
       - uses: actions/checkout@v4
       - if: matrix.engine == 'terraform'
         uses: hashicorp/setup-terraform@v3
         with:
+          terraform_version: ${{ matrix.version }}
           terraform_wrapper: false
       - if: matrix.engine == 'opentofu'
         uses: opentofu/setup-opentofu@v1
         with:
+          tofu_version: ${{ matrix.version }}
           tofu_wrapper: false
       - name: Run tests
         run: |
@@ -127,8 +141,7 @@ jobs:
           terraform-docs --version
       - name: Regenerate
         run: |
-          for dir in . modules/check modules/escalation modules/group \
-                     modules/integration modules/maintenance modules/tag wrappers; do
+          for dir in . modules/*/ wrappers; do
             terraform-docs -c "$PWD/.terraform-docs.yml" "$dir"
           done
       - name: Fail if the committed docs differ
