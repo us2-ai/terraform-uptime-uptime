@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Notes
+
+- The Release workflow now rewrites relative Markdown links in the changelog section it publishes
+  (`./UPGRADE-3.0.md`) to absolute links at the release tag. A relative link resolves from the
+  CHANGELOG's own page but 404s from a release page, which is what happened to the 3.0.0 release
+  notes until they were edited by hand.
+
 ## [3.0.0] - 2026-09-18
 
 Read [UPGRADE-3.0.md](./UPGRADE-3.0.md) before upgrading. The order of the steps matters, and one
