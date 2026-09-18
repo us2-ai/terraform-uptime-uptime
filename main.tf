@@ -15,14 +15,14 @@ locals {
   private_check_locations = [for l in local.private_locations : l.location]
 
   primary_tag = local.create_tag ? {
-    "${var.name}" = {
+    (var.name) = {
       color_hex = var.color_hex
     }
   } : {}
   tags = merge(local.primary_tag, var.tags)
 
   primary_group = local.create_group ? {
-    "${var.name}" = {
+    (var.name) = {
       contact_groups            = var.contact_groups
       include_in_global_metrics = var.include_in_global_metrics
       is_paused                 = var.is_paused
@@ -138,17 +138,6 @@ module "escalation" {
   escalations = each.value.escalations
 }
 
-module "maintenance" {
-  source   = "./modules/maintenance"
-  for_each = { for k, v in var.maintenances : k => v if var.create }
-
-  create                         = try(each.value.create_maintenance, true)
-  check_id                       = each.value.check_id
-  schedule                       = try(each.value.schedule, null)
-  state                          = try(each.value.state, null)
-  pause_on_scheduled_maintenance = try(each.value.pause_on_scheduled_maintenance, null)
-}
-
 module "maintenance_schedule" {
   source   = "./modules/maintenance_schedule"
   for_each = { for k, v in var.maintenance_schedules : k => v if var.create }
@@ -199,7 +188,6 @@ module "statuspage" {
   allow_drill_down             = try(each.value.allow_drill_down, null)
   allow_pdf_report             = try(each.value.allow_pdf_report, null)
   allow_search_indexing        = try(each.value.allow_search_indexing, null)
-  allow_subscriptions          = try(each.value.allow_subscriptions, null)
   allow_subscriptions_email    = try(each.value.allow_subscriptions_email, null)
   allow_subscriptions_rss      = try(each.value.allow_subscriptions_rss, null)
   allow_subscriptions_slack    = try(each.value.allow_subscriptions_slack, null)

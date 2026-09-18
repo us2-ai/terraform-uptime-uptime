@@ -14,7 +14,7 @@ Contributions are welcome and appreciated.
 
 ## Development Requirements
 
-- [Terraform](https://www.terraform.io/downloads) >= 1.9 or [OpenTofu](https://opentofu.org) >= 1.9
+- [Terraform](https://www.terraform.io/downloads) >= 1.10.3 or [OpenTofu](https://opentofu.org) >= 1.10.3
 - [pre-commit](https://pre-commit.com/#install) (optional but recommended)
 - [terraform-docs](https://terraform-docs.io/) (optional, for README generation)
 - [TFLint](https://github.com/terraform-linters/tflint) (optional, for linting)
@@ -79,12 +79,11 @@ Two limitations worth knowing:
 
 ### Regenerate documentation
 
-The README tables between the `BEGIN_TF_DOCS` / `END_TF_DOCS` markers are generated. Eight
-directories have generated tables — the root, six submodules, and the wrapper:
+The README tables between the `BEGIN_TF_DOCS` / `END_TF_DOCS` markers are generated. Every
+module directory has them: the root, each submodule, and the wrapper:
 
 ```bash
-for dir in . modules/check modules/escalation modules/group \
-           modules/integration modules/maintenance modules/tag wrappers; do
+for dir in . modules/*/ wrappers; do
   terraform-docs -c "$PWD/.terraform-docs.yml" "$dir"
 done
 ```
@@ -94,8 +93,8 @@ CI regenerates these and fails on any difference, so commit the result.
 Two things to know:
 
 - Run this **without** a `.terraform.lock.hcl` present in the directory. With a lock file,
-  terraform-docs renders the resolved provider version (`2.31.0`) instead of the constraint
-  (`>= 2.31`), which does not match what CI produces. `terraform init` creates one, so regenerate
+  terraform-docs renders the resolved provider version (`3.0.0`) instead of the constraint
+  (`>= 3.0`), which does not match what CI produces. `terraform init` creates one, so regenerate
   from a clean checkout or move the lock file aside.
 - CI pins terraform-docs to the version named in `.github/workflows/validate.yml`; a different
   version may format tables differently.
@@ -118,8 +117,10 @@ its attribute names against an allowlist. **Adding an attribute without adding i
 makes it unusable** — callers who set it get a validation error.
 
 Each allowlist is a single entry in a `local.allowed_attributes` map, referenced from the variable's
-`validation` block. Referencing a local from a validation block is why this module requires
-Terraform/OpenTofu >= 1.9.
+`validation` block. Referencing a local from a validation block needs Terraform/OpenTofu >= 1.9.
+The declared floor is higher, 1.10.3, because OpenTofu 1.9.0 through 1.10.2 crash in `tofu test`
+on this module's suites (fixed upstream in 1.10.3, opentofu/opentofu#2994), and a floor CI cannot
+test is not a floor.
 
 Allowlists live in:
 
@@ -132,7 +133,7 @@ Allowlists live in:
 | `modules/integration/allowlists.tf` | `settings` (union across all integration types) |
 
 Blocks passed straight through to the provider (`sla`, credential `secret`, dashboard
-`alerts`/`metrics`/`services`/`selected`, maintenance `schedule`, group `config`) have no allowlist —
+`alerts`/`metrics`/`services`/`selected`, group `config`) have no allowlist —
 the provider type-checks those itself.
 
 To confirm an allowlist matches what the code actually reads, compare it against the `each.value.*`
@@ -163,12 +164,16 @@ references in the corresponding `main.tf`.
 2. Add `main.tf`, `variables.tf`, `outputs.tf`, and `versions.tf` following existing patterns:
    - Use `count = var.create ? 1 : 0` for conditional creation
    - Use `try(resource[0].attr, null)` in outputs
-3. Wire the module into the root `main.tf` with `for_each` and `try()` inheritance
-4. Add the input variable (type `any`, default `{}`) to root `variables.tf`, with a `validation`
+   - Declare the provider floor in `versions.tf`; every submodule carries it so that calling one
+     directly cannot resolve a provider too old for its resources
+3. Add a `README.md` with a one-line description, a usage block, and the `BEGIN_TF_DOCS` /
+   `END_TF_DOCS` markers, then generate its tables (see above). CI fails on a submodule without one.
+4. Wire the module into the root `main.tf` with `for_each` and `try()` inheritance
+5. Add the input variable (type `any`, default `{}`) to root `variables.tf`, with a `validation`
    block referencing a new `local.allowed_attributes` entry in `allowlists.tf`
-5. Add the output to root `outputs.tf`
-6. Add the variable to `wrappers/main.tf` with 3-level `try()` fallback, and add its attributes to
+6. Add the output to root `outputs.tf`
+7. Add the variable to `wrappers/main.tf` with 3-level `try()` fallback, and add its attributes to
    `wrappers/allowlists.tf`
-7. Update the README submodules table, inputs, and outputs
-8. Add usage to `examples/complete/`
-9. Update `CHANGELOG.md` under the `[Unreleased]` section
+8. Update the README submodules table, inputs, and outputs
+9. Add usage to `examples/complete/`
+10. Update `CHANGELOG.md` under the `[Unreleased]` section

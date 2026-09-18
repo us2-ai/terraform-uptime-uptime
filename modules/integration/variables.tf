@@ -33,8 +33,6 @@ variable "settings" {
   type        = any
   default     = {}
 
-
-
   # Rejects attributes the module does not read; see allowlists.tf.
   validation {
     condition = length(setsubtract(try(keys(var.settings), []), local.allowed_attributes.settings)) == 0

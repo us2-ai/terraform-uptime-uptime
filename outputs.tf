@@ -23,11 +23,6 @@ output "escalation" {
   value       = module.escalation
 }
 
-output "maintenance" {
-  description = "Map of maintenance module outputs keyed by maintenance name"
-  value       = module.maintenance
-}
-
 output "maintenance_schedule" {
   description = "Map of maintenance schedule module outputs keyed by schedule name"
   value       = module.maintenance_schedule

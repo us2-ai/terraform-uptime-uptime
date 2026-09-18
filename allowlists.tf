@@ -46,9 +46,6 @@ locals {
       "create_maintenance_schedule", "duration_minutes", "ends_at", "is_active", "name",
       "pause_checks_during_maintenance", "rrule", "schedule_type", "services", "starts_at", "tags"
     ]
-    maintenances = [
-      "check_id", "create_maintenance", "pause_on_scheduled_maintenance", "schedule", "state"
-    ]
     scheduled_reports = [
       "at_time", "create_scheduled_report", "file_type", "is_enabled", "name", "on_weekday",
       "recipient_emails", "recipient_users", "recurrence", "sla_report"
@@ -64,7 +61,7 @@ locals {
       "show_uptime_sla", "uptime_section_sort"
     ]
     statuspages = [
-      "allow_drill_down", "allow_pdf_report", "allow_search_indexing", "allow_subscriptions",
+      "allow_drill_down", "allow_pdf_report", "allow_search_indexing",
       "allow_subscriptions_email", "allow_subscriptions_rss", "allow_subscriptions_slack",
       "allow_subscriptions_sms", "allow_subscriptions_webhook", "auth_password", "auth_username",
       "cname", "company_website_url", "components", "contact_email", "create_statuspage",

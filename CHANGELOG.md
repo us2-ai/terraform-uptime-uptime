@@ -2,20 +2,65 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [3.0.0] - 2026-09-18
+
+Read [UPGRADE-3.0.md](./UPGRADE-3.0.md) before upgrading. The order of the steps matters, and one
+of them has to happen while still on 2.x.
+
+### Breaking Changes
+
+- **Minimum provider raised from 2.34 to 3.0, and the `maintenances` collection is gone.** Provider
+  3.0.0 removed `uptime_check_maintenance`, the only consumer of the per-check maintenance endpoint
+  that Uptime.com shuts off on 2026-09-28. That resource was the whole of this module's
+  `maintenance` submodule, so the submodule, the root `maintenances` collection, the root
+  `maintenance` output, and the wrapper's `maintenances` attribute are removed with it. The only
+  other change between provider 2.34.0 and 3.0.0 is dependency bumps, so the floor moves for this
+  one reason.
+
+  Upgrading with a check maintenance window still in state is a hard stop, not a diff: provider
+  3.0.0 has no schema for the resource, so `terraform plan` fails with "does not support resource
+  type" until the state entry is gone, and the module cannot remove it for you because the same
+  missing schema blocks a `removed` block. Each window has to be either ended by removing it and
+  applying on 2.x, or kept by `terraform state rm` on 2.x, before the upgrade. Kept windows already
+  exist server-side as maintenance schedules and are re-adopted afterwards through
+  `maintenance_schedules` and an `import` block.
+
+  `maintenances` itself is retained as a variable that rejects any non-empty value, so a
+  configuration carried over from 2.x fails with the migration steps named rather than with an
+  unexplained "Unsupported argument". It goes away in 4.0.0.
+
+- **Minimum Terraform/OpenTofu raised from 1.9 to 1.10.3.** OpenTofu 1.9.0 through 1.10.2 crash
+  inside `tofu test` on this module's root and wrapper suites, with a panic in the engine's type
+  conformance check while refreshing a mocked resource. OpenTofu fixed it in 1.10.3 ("Correctly
+  handle structural typed attributes during test provider mocking", opentofu/opentofu#2994). The
+  crash predates this release and went unnoticed because the Test CI job ran only on the latest
+  release of each engine; it now runs on the floor as well. The constraint is shared by both
+  engines, so Terraform 1.9.x and 1.10.0 through 1.10.2 are excluded too, although nothing in this
+  module fails on them. The full suite passes on Terraform 1.13.3 and on OpenTofu 1.10.3 and
+  1.12.6; the two affected suites also pass on OpenTofu 1.10.4 through 1.11.0.
+
+- The statuspage `allow_subscriptions` variable, retained in 2.0.0 only to fail with a pointer to
+  the per-channel flags, is removed outright. Setting it now fails the `statuspages` allowlist check,
+  whose error lists the valid attributes. Nothing changes in infrastructure: the value was inert
+  since provider 2.25.0.
+
+### Features
+
+- Every submodule now has a `README.md` with generated Requirements, Resources, Inputs and Outputs
+  tables. Eleven of the seventeen had none, so they could only be read from source, and the Docs
+  Drift CI job could not cover them. The job now globs `modules/*/`, so a new submodule without a
+  README fails CI instead of joining the undocumented set.
 
 ### Notes
 
-- Every `versions.tf` now declares the provider floor. `modules/check`, `modules/integration`,
-  `modules/statuspage` and `wrappers` declared only `source`, so their generated Requirements
-  tables read `n/a` and calling one of them directly was unconstrained. The other 14 submodules
-  already pinned it. Nothing changes for callers who use the module through the root, which
-  already carried the floor.
+- Example configurations pin the provider with `~> 3.0`. Two of the five previously used `>=`,
+  which would have let an example resolve a future major.
 
-  `required_version = ">= 1.9"` stays on those same four and nowhere else, which is deliberate
-  rather than the same oversight. They are the four that are their own `terraform test` roots,
-  and the four whose allowlists reference locals from a validation block, which is the feature
-  that needs 1.9.
+- Every `versions.tf` declares the provider floor, now `>= 3.0`. `modules/check`,
+  `modules/integration`, `modules/statuspage` and `wrappers` had declared only `source` before this
+  release, so their generated Requirements tables read `n/a` and calling one of them directly was
+  unconstrained. `required_version` stays on those same four and nowhere else. They are the four
+  `terraform test` roots, and the four whose allowlists reference locals from a validation block.
 
 ## [2.1.0] - 2026-08-25
 

@@ -53,18 +53,6 @@ run "other_attributes_added_for_2_31_reach_the_resource" {
   }
 }
 
-run "allow_subscriptions_is_rejected" {
-  command = plan
-
-  # The API derives this from the per-channel flags and the provider stopped sending it in
-  # 2.25.0, so a value here was silently discarded rather than applied.
-  variables {
-    allow_subscriptions = true
-  }
-
-  expect_failures = [var.allow_subscriptions]
-}
-
 run "per_channel_subscription_flags_are_accepted" {
   command = apply
 

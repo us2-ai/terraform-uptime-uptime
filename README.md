@@ -1,6 +1,6 @@
 # terraform-uptime
 
-Terraform module to manage [Uptime.com](https://uptime.com) monitoring resources including checks, tags, check groups, integrations, escalations, maintenance windows, contacts, status pages, credentials, dashboards, SLA reports, and more.
+Terraform module to manage [Uptime.com](https://uptime.com) monitoring resources including checks, tags, check groups, integrations, escalations, maintenance schedules, contacts, status pages, credentials, dashboards, SLA reports, and more.
 
 ## Usage
 
@@ -77,7 +77,6 @@ cachet, datadog, geckoboard, jira_servicedesk, klipfolio, microsoft_teams, opsge
 - **Tags** — Create and manage tags with optional colors
 - **Check Groups** — Group checks with shared SLA and alerting configuration
 - **Escalations** — Define escalation policies attached to checks
-- **Maintenance** — Schedule maintenance windows for checks
 - **Maintenance Schedules** — Account-level maintenance windows (one-off or RRULE recurring) targeting checks and tags
 - **Maintenance Notifications** — Notify contact groups before/after a maintenance schedule event
 - **Contacts** — Manage notification contacts and contact groups (email, SMS, phone, push, integrations)
@@ -108,8 +107,16 @@ than something to go look up.
 Attributes nested inside a collection (statuspage `components`, check `config`, integration
 `settings`) are validated at `terraform plan` rather than `terraform validate`, because Terraform
 does not expand module `for_each` during validate. Blocks passed straight through to the provider —
-`sla`, credential `secret`, dashboard `alerts`/`metrics`/`services`/`selected`, maintenance
-`schedule`, group `config` — are type-checked by the provider itself.
+`sla`, credential `secret`, dashboard `alerts`/`metrics`/`services`/`selected`, group `config` —
+are type-checked by the provider itself.
+
+## Upgrading
+
+Major versions of this module track major versions of the `uptime-com/uptime` provider, and each
+one has its own guide with the steps in order and the `terraform state` addresses spelled out:
+
+- [UPGRADE-3.0.md](./UPGRADE-3.0.md): provider 3.0.0 removed `uptime_check_maintenance`, so the
+  `maintenances` collection is gone. Migrate windows to `maintenance_schedules` before upgrading.
 
 ## Submodules
 
@@ -120,7 +127,6 @@ does not expand module `for_each` during validate. Blocks passed straight throug
 | [group](./modules/group/) | Creates check groups |
 | [integration](./modules/integration/) | Creates alert integrations |
 | [escalation](./modules/escalation/) | Creates check escalation policies |
-| [maintenance](./modules/maintenance/) | Creates check maintenance windows |
 | [maintenance_schedule](./modules/maintenance_schedule/) | Creates account-level maintenance schedules |
 | [maintenance_notification](./modules/maintenance_notification/) | Creates maintenance schedule notifications |
 | [contact](./modules/contact/) | Creates notification contacts and contact groups |
@@ -136,7 +142,7 @@ does not expand module `for_each` during validate. Blocks passed straight throug
 ## Examples
 
 - [Simple](./examples/simple/) — Single HTTP check with tag and group
-- [Complete](./examples/complete/) — Multiple check types, integrations, escalations, and maintenance
+- [Complete](./examples/complete/) — Multiple check types, integrations, escalations, and maintenance schedules
 - [Integrations](./examples/integrations/) — Various integration configurations
 - [Maintenance](./examples/maintenance/) — Cloud status check, maintenance schedules, and notifications
 - [Private Locations](./examples/private-locations/) — Targeting checks at the account's private monitoring locations
@@ -148,14 +154,14 @@ does not expand module `for_each` during validate. Blocks passed straight throug
 
 | Name | Version |
 | ---- | ------- |
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9 |
-| <a name="requirement_uptime"></a> [uptime](#requirement\_uptime) | >= 2.34 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.10.3 |
+| <a name="requirement_uptime"></a> [uptime](#requirement\_uptime) | >= 3.0 |
 
 ## Providers
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_uptime"></a> [uptime](#provider\_uptime) | >= 2.34 |
+| <a name="provider_uptime"></a> [uptime](#provider\_uptime) | >= 3.0 |
 
 ## Modules
 
@@ -166,7 +172,6 @@ does not expand module `for_each` during validate. Blocks passed straight throug
 | <a name="module_check"></a> [check](#module\_check) | ./modules/check | n/a |
 | <a name="module_integration"></a> [integration](#module\_integration) | ./modules/integration | n/a |
 | <a name="module_escalation"></a> [escalation](#module\_escalation) | ./modules/escalation | n/a |
-| <a name="module_maintenance"></a> [maintenance](#module\_maintenance) | ./modules/maintenance | n/a |
 | <a name="module_maintenance_schedule"></a> [maintenance\_schedule](#module\_maintenance\_schedule) | ./modules/maintenance_schedule | n/a |
 | <a name="module_maintenance_notification"></a> [maintenance\_notification](#module\_maintenance\_notification) | ./modules/maintenance_notification | n/a |
 | <a name="module_contact"></a> [contact](#module\_contact) | ./modules/contact | n/a |
@@ -230,7 +235,7 @@ does not expand module `for_each` during validate. Blocks passed straight throug
 | <a name="input_sla_uptime"></a> [sla\_uptime](#input\_sla\_uptime) | SLA uptime (string, for RUM2 checks) | `string` | `null` | no |
 | <a name="input_integrations"></a> [integrations](#input\_integrations) | Integrations | `any` | `{}` | no |
 | <a name="input_escalations"></a> [escalations](#input\_escalations) | Escalations | `any` | `{}` | no |
-| <a name="input_maintenances"></a> [maintenances](#input\_maintenances) | Maintenances | `any` | `{}` | no |
+| <a name="input_maintenances"></a> [maintenances](#input\_maintenances) | REMOVED in v3.0.0. Provider 3.0.0 dropped `uptime_check_maintenance`, so per-check maintenance windows can no longer be managed here. Retained only so that an existing configuration fails with a pointer to the migration steps instead of an unexplained "Unsupported argument". Use `maintenance_schedules` and `maintenance_notifications` instead; see UPGRADE-3.0.md. | `any` | `{}` | no |
 | <a name="input_maintenance_schedules"></a> [maintenance\_schedules](#input\_maintenance\_schedules) | Maintenance Schedules | `any` | `{}` | no |
 | <a name="input_maintenance_notifications"></a> [maintenance\_notifications](#input\_maintenance\_notifications) | Maintenance Notifications | `any` | `{}` | no |
 | <a name="input_contacts"></a> [contacts](#input\_contacts) | Contacts | `any` | `{}` | no |
@@ -252,7 +257,6 @@ does not expand module `for_each` during validate. Blocks passed straight throug
 | <a name="output_check"></a> [check](#output\_check) | Map of check module outputs keyed by check name |
 | <a name="output_integration"></a> [integration](#output\_integration) | Map of integration module outputs keyed by integration name |
 | <a name="output_escalation"></a> [escalation](#output\_escalation) | Map of escalation module outputs keyed by escalation name |
-| <a name="output_maintenance"></a> [maintenance](#output\_maintenance) | Map of maintenance module outputs keyed by maintenance name |
 | <a name="output_maintenance_schedule"></a> [maintenance\_schedule](#output\_maintenance\_schedule) | Map of maintenance schedule module outputs keyed by schedule name |
 | <a name="output_maintenance_notification"></a> [maintenance\_notification](#output\_maintenance\_notification) | Map of maintenance notification module outputs keyed by notification name |
 | <a name="output_contact"></a> [contact](#output\_contact) | Map of contact module outputs keyed by contact name |
