@@ -29,6 +29,12 @@ jobs:
             found                  { print }
           ' CHANGELOG.md)
 
+          # CHANGELOG links to repository files relatively (`./UPGRADE-3.0.md`), which resolves
+          # from the file's own page but 404s from a release page. Point such links at the file
+          # as of this tag instead, so the release notes stay correct if the file later moves.
+          SECTION=$(printf '%s\n' "$SECTION" | sed -E \
+            "s#\]\((\./)?([A-Za-z0-9_./-]+\.md(\#[^)]*)?)\)#](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/\2)#g")
+
           {
             echo "body<<__EOF__"
             if [ -n "$(printf '%s' "$SECTION" | tr -d '[:space:]')" ]; then
