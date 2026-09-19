@@ -53,7 +53,7 @@ Values are resolved in this order (highest priority first):
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.10.3 |
-| <a name="requirement_uptime"></a> [uptime](#requirement\_uptime) | >= 3.0 |
+| <a name="requirement_uptime"></a> [uptime](#requirement\_uptime) | >= 3.1 |
 
 ## Providers
 

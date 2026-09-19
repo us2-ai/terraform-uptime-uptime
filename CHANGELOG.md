@@ -2,9 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [3.1.0] - 2026-09-19
+
+### Features
+
+- **Minimum provider version raised from 3.0 to 3.1.** Provider 3.1.0 added `bulk_read`, an opt-in
+  provider argument that refreshes checks and tags from their paginated list endpoints instead of
+  making one request per resource. This module creates one resource per entry in `checks` and
+  `tags`, which is the shape that exhausts an account's hourly API limit, so the floor moves to put
+  `bulk_read` within reach of every caller without one of their own provider constraints.
+
+  Nothing in this module's code requires 3.1.0. No resource schema changed between 3.0.0 and
+  3.1.0, and the attribute allowlists are untouched. Run `terraform init -upgrade` to pick it up.
+  The examples move from `~> 3.0` to `~> 3.1` alongside the module.
+
+- The README has a new "Rate limits" section covering `bulk_read`, the `UPTIME_BULK_READ`
+  environment variable, how long the cache holds, and the provider's existing `rate_limit`
+  argument. This module declares no `provider` block, so the caller sets all of them.
 
 ### Notes
+
+- Provider 3.1.0 also fixes the `uptime_check_groups` data source, which always sent
+  `is_paused=false` to the list endpoint and so omitted paused groups. The fix does not reach this
+  module, whose only data source is `uptime_private_locations`. A root module that reads
+  `uptime_check_groups` itself will see paused groups appear after the upgrade; filter on the
+  `is_paused` attribute to keep the previous set.
 
 - The Release workflow now rewrites relative Markdown links in the changelog section it publishes
   (`./UPGRADE-3.0.md`) to absolute links at the release tag. A relative link resolves from the

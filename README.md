@@ -110,6 +110,32 @@ does not expand module `for_each` during validate. Blocks passed straight throug
 `sla`, credential `secret`, dashboard `alerts`/`metrics`/`services`/`selected`, group `config` —
 are type-checked by the provider itself.
 
+## Rate limits
+
+Every `terraform plan` refreshes each check and each tag with its own API request. This module
+creates one resource per entry in `checks` and `tags`, so an account with a few hundred checks
+makes a few hundred requests per plan, and concurrent runs draw on the same hourly limit.
+
+Provider 3.1.0 added `bulk_read`, which refreshes checks and tags from their paginated list
+endpoints instead. It is off by default. This module declares no `provider` block, so set it in
+your root module:
+
+```hcl
+provider "uptime" {
+  bulk_read = true
+}
+```
+
+Setting `UPTIME_BULK_READ` to any non-empty value does the same. This module requires provider
+`>= 3.1`, so the argument is always available to a caller.
+
+The cache holds for one plan or apply. A resource missing from the list is still fetched on its
+own, so a deletion made outside Terraform is detected as before, and a change made outside
+Terraform while a run is in progress is picked up on the next run.
+
+The provider's `rate_limit` argument sets requests per second and defaults to 0.5. It throttles
+requests rather than reducing their number, so it is independent of `bulk_read`.
+
 ## Upgrading
 
 Major versions of this module track major versions of the `uptime-com/uptime` provider, and each
@@ -155,13 +181,13 @@ one has its own guide with the steps in order and the `terraform state` addresse
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.10.3 |
-| <a name="requirement_uptime"></a> [uptime](#requirement\_uptime) | >= 3.0 |
+| <a name="requirement_uptime"></a> [uptime](#requirement\_uptime) | >= 3.1 |
 
 ## Providers
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_uptime"></a> [uptime](#provider\_uptime) | >= 3.0 |
+| <a name="provider_uptime"></a> [uptime](#provider\_uptime) | >= 3.1 |
 
 ## Modules
 
