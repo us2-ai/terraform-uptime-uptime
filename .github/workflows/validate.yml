@@ -6,10 +6,12 @@ on:
   push:
     branches: [main]
 
+# Every job names ubuntu-26.04 rather than ubuntu-latest, so the runner OS changes
+# in a reviewed commit, not when GitHub repoints ubuntu-latest to a new Ubuntu release.
 jobs:
   fmt:
     name: Format
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -21,7 +23,7 @@ jobs:
     # why the floor is a patch release. Test the declared floor as well as current releases, on
     # both engines.
     name: Validate Root (${{ matrix.engine }} ${{ matrix.version }})
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -54,7 +56,7 @@ jobs:
 
   validate-examples:
     name: Validate Examples
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -69,7 +71,7 @@ jobs:
 
   validate-wrappers:
     name: Validate Wrappers
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -84,7 +86,7 @@ jobs:
     # on the declared floor as well as latest: until 3.0.0 this job ran only on latest, which is
     # how an OpenTofu 1.9.0 crash in these suites went unnoticed while 1.9 was the floor.
     name: Test (${{ matrix.engine }} ${{ matrix.version }})
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -127,7 +129,7 @@ jobs:
     # Deliberately no `terraform init` here: with a lock file present terraform-docs renders the
     # resolved provider version instead of the constraint, which would change the output.
     name: Docs Drift
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
       TERRAFORM_DOCS_VERSION: v0.24.0
     steps:
@@ -155,7 +157,7 @@ jobs:
     # An allowlist that omits an attribute the module reads makes that attribute
     # unsettable. Fail if the two ever disagree.
     name: Allowlist Drift
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
       - name: Compare allowlists against attributes the module reads
