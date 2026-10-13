@@ -11,7 +11,9 @@ permissions:
 jobs:
   release:
     name: Create Release
-    runs-on: ubuntu-latest
+    # ubuntu-26.04 rather than ubuntu-latest, so the runner OS changes in a reviewed
+    # commit, not when GitHub repoints ubuntu-latest to a new Ubuntu release.
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
         with:
